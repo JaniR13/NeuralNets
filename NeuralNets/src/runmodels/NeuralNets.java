@@ -10,7 +10,13 @@ package runmodels;
  * @author Janette
  */
 public class NeuralNets extends AbstractModel{
+    public NeuralNets(){
+        
+    }
     void execute(){
+        
+    }
+    void compileResults(){
         
     }
 }
