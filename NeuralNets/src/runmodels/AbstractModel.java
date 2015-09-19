@@ -14,6 +14,10 @@ public abstract class AbstractModel {
     void importData(){
         
     }
+    void exportResults(){
+        
+    }
+    abstract void compileResults();
     abstract void execute();
     
 }
