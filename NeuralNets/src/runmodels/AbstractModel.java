@@ -10,15 +10,17 @@ package runmodels;
  * @author Janette
  */
 public abstract class AbstractModel {
-    
-    void importData(){
+    public AbstractModel(){
         
     }
-    void exportResults(){
-        
+    public void importData(){
+     //Get data from wherever   
+    }
+    public void exportResults(){
+     //put comma separated values in a CSV file
     }
     
-    abstract void compileResults();
-    abstract void execute();
+    abstract void compileResults();//assemble results in desired comma separated value format
+    abstract void execute();//run the model
     
 }
