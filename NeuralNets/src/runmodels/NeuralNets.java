@@ -14,6 +14,8 @@ package runmodels;
 
 
 public class NeuralNets extends AbstractModel{
+    //inherits from AbstractModel so needs to implement execute and compileResults
+    //in addition to the actual Neural Net. 
     public NeuralNets(){
         
     }
