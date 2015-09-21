@@ -5,13 +5,13 @@ package runmodels;
 
 public abstract class AbstractNode {
 	
-	private AbstractFunction activationFunction;
-	private double[] input_weights;
-	private double output;
 	
 	public AbstractNode(){
 		
 	}
+	
+	abstract double sumInputs();
+	abstract double applyActivationFunction();
 	
 	
 
