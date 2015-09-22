@@ -27,6 +27,9 @@ public class ANNNode extends AbstractNode {
 	}
 
 
+	/**
+	 * Calculates the output of the node: multiplies input vector by weight vector and sums
+	 */
 	@Override
 	public double calcOutput(double[] inputs) {
 		double output = 0;
