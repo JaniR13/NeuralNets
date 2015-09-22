@@ -1,6 +1,6 @@
 package runmodels;
 
-import java.lang.Math.*;
+//import java.lang.Math.*;
 
 public class ANNNode extends AbstractNode {
 	
@@ -10,7 +10,8 @@ public class ANNNode extends AbstractNode {
 	private double[] inputs;
 	// TODO: do the weights need to be < 1?
 	private double[] weights;
-	private double output;
+	// TODO: should probably set output to whatever that wo is
+	private double output= 0;
 	
 	public ANNNode(AbstractFunction activationFunction, int numInputs){
 		// creates random initial weights. 
@@ -32,7 +33,7 @@ public class ANNNode extends AbstractNode {
 	 */
 	@Override
 	public double calcOutput(double[] inputs) {
-		double output = 0;
+		output = 0;
 		
 		// calculates \sum_i w_i x_i
 		for (int i = 0; i < inputs.length; i++){
@@ -44,6 +45,10 @@ public class ANNNode extends AbstractNode {
 	
 	public double[] getWeights() {
 		return weights;
+	}
+	
+	public double getOutput(){
+		return output;
 	}
 
 }
