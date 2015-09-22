@@ -1,30 +1,46 @@
 package runmodels;
 
+import java.lang.Math.*;
+
 public class ANNNode extends AbstractNode {
 	
-	private AbstractFunction activationFunction;
+	private AbstractFunction f;
+	// TODO: what to do about loss function?
 	private AbstractFunction lossFunction;
 	private double[] inputs;
+	// TODO: do the weights need to be < 1?
 	private double[] weights;
 	private double output;
 	
-	public ANNNode(){
-		// TODO: create initial weights
+	public ANNNode(AbstractFunction activationFunction, int numInputs){
+		// creates random initial weights. 
+		weights = new double[numInputs];
+		for (int i = 0; i < numInputs; i++){
+			weights[i] = Math.random();
+		}
 		
-		// TODO: create new Logistic function
+		// TODO: Inputs will be passed in to another function (probably calcOutput())
+		
+		// TODO: pass in a new Logistic function
+		f = activationFunction;
 		
 	}
 
-	@Override
-	double sumInputs() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
-	double applyActivationFunction() {
-		// TODO Auto-generated method stub
-		return 0;
+	public double calcOutput(double[] inputs) {
+		double output = 0;
+		
+		// calculates \sum_i w_i x_i
+		for (int i = 0; i < inputs.length; i++){
+			output += (weights[i] * inputs[i]);
+		}
+		
+		return output;
+	}
+	
+	public double[] getWeights() {
+		return weights;
 	}
 
 }

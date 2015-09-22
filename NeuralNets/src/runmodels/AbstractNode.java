@@ -10,8 +10,8 @@ public abstract class AbstractNode {
 		
 	}
 	
-	abstract double sumInputs();
-	abstract double applyActivationFunction();
+
+	abstract double calcOutput(double[] inputs);
 	
 	
 
