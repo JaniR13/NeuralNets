@@ -9,10 +9,11 @@ public class FeedForwardANN extends AbstractModel {
 
 	
 	private AbstractFunction lossFunction;
-	private double[] inputs;
+	private ArrayList<Double> inputs;
+	private double bias;
 	private double output;
 	private int layers;
-	// note: each "sub" arraylist is the nodes in a layer (didn't use a 2D array in case different
+	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in case different
 	// layers have different numbers of nodes)
 	private ArrayList<ArrayList<ANNNode>> nodes;
 	
@@ -63,23 +64,26 @@ public class FeedForwardANN extends AbstractModel {
 
 	}
 	
-	public double generateOutput(double[] inputs){
+	public double generateOutput(ArrayList<Double> inputs){
 		// TODO: this would be a great place to throw an error if we get the wrong number of inputs
 		this.inputs = inputs;
 		
 		// TODO: this is going to be broken. SO broken.
 		// TODO: figure out stuff with bias node
 		
-		// runs through one layer at a time
-		for (int i = 0; i < layers; i++){
+		// steps: 
+		// 1. get inputs into input nodes
+		
+		
+		// runs through one layer at a time, EXCEPT input and output layers
+		for (int i = 1; i < layers - 1 ; i++){
 			for (ANNNode n : nodes.get(i)){
-				// steps: 
-				// 1. get inputs into input nodes
 				// 2. pass output of input nodes into first hidden layer
 				// 3. calculate output for each node in hidden layer, pass output into next layer
-				// 4. once you hit the output layer, save the output of that layer into a list/array and print
 			}	
 		}
+		
+		// 4. once you hit the output layer, save the output of that layer into a list/array and print
 		
 		return -1.0;
 	}

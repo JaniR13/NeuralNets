@@ -9,9 +9,9 @@ public class ANNNode extends AbstractNode {
 	
 	private AbstractFunction f;
 	private AbstractFunction lossFunction;
-	private double[] inputs;
+	private ArrayList<Double> inputs;
 	// TODO: do the weights need to be < 1?
-	private double[] weights;
+	private ArrayList<Double> weights;
 	// TODO: should probably set output to whatever wo is
 	private double output = 0;
 	
@@ -35,9 +35,9 @@ public class ANNNode extends AbstractNode {
 	 */
 	public ANNNode(AbstractFunction activationFunction, int numInputs){
 		// creates random initial weights. 
-		weights = new double[numInputs];
+		weights = new ArrayList<Double>();
 		for (int i = 0; i < numInputs; i++){
-			weights[i] = Math.random();
+			weights.add(Math.random());
 		}
 		
 		// TODO: Inputs will be passed in to another function (probably calcOutput())
@@ -52,12 +52,12 @@ public class ANNNode extends AbstractNode {
 	 * Calculates the output of the node: multiplies input vector by weight vector and sums
 	 */
 	@Override
-	public double calcOutput(double[] inputs) {
+	public double calcOutput(ArrayList<Double> inputs) {
 		output = 0;
 		
 		// calculates \sum_i w_i x_i
-		for (int i = 0; i < inputs.length; i++){
-			output += (weights[i] * inputs[i]);
+		for (int i = 0; i < inputs.size(); i++){
+			output += (weights.get(i) * inputs.get(i));
 		}
 		
 		return f.calcfx(output);
@@ -88,9 +88,9 @@ public class ANNNode extends AbstractNode {
 		
 		s += "[" + layer + ", " + depth + "] " + "< ";
 		
-		for (int w = 0; w < weights.length; w++) {
+		for (int w = 0; w < weights.size(); w++) {
 			DecimalFormat twoDForm = new DecimalFormat("#.##");
-			double weight = Double.valueOf(twoDForm.format(weights[w]));
+			double weight = Double.valueOf(twoDForm.format(weights.get(w)));
 			s += weight + " ";
 		}
 		
@@ -99,7 +99,7 @@ public class ANNNode extends AbstractNode {
 		return s;
 	}
 	
-	public double[] getWeights() {
+	public ArrayList<Double> getWeights() {
 		return weights;
 	}
 	
