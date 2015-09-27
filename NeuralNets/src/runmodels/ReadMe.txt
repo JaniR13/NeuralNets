@@ -48,11 +48,13 @@ RunModels.java
 
 * There is not yet a specific node class for KernelANN, but it can't use ANNNode (I think).
 
-* MeanSquareError function is not yet implemented or tested.
+* MeanSquareError function is not yet implemented or tested - can't measure error yet.
 
-* We haven't really settled if we want to count the input layer or not, and how to do that.
+* We're including the input nodes as a layer for FeedForward, so we need to make sure we know how to deal with that.
 
 * We need some way to determine the structure of the network, i.e. how many layers and how many nodes per layer, AND
 	number of inputs.
 	
 * We don't yet have the bias node included.
+
+* Need to find some way to define the ancestors and descendants of each node - right now, it's a list in the ANNNode class

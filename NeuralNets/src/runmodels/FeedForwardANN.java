@@ -16,19 +16,31 @@ public class FeedForwardANN extends AbstractModel {
 	// layers have different numbers of nodes)
 	private ArrayList<ArrayList<ANNNode>> nodes;
 	
+	// TODO: this needs to go away once we figure out how to actually set this to something reasonable.
+	private int arbitraryLayerDepth = 4;
+	
 	public FeedForwardANN(int layers){
 		this.layers = layers;
 		
 		// makes list of nodes
-		// TODO: decide if we want an input layer or not
-		// TODO: also decide how deep we want our layers to be...for now, just arbitrarily chose 4, with 4 inputs
+		// TODO: decide how deep we want our layers to be...for now, just arbitrarily chose 4, with 4 inputs
 		nodes = new ArrayList<ArrayList<ANNNode>>();
 		LogisticFunction l = new LogisticFunction();
 		
+		// creates individual nodes
 		for (int i = 0; i < layers; i++){
+			// creates one layer at a time
 			ArrayList<ANNNode> nextLayer = new ArrayList<ANNNode>();
-			for (int j = 0; j < 4; j++){
-				nextLayer.add(new ANNNode(l, 4));
+			for (int j = 0; j < arbitraryLayerDepth; j++){
+				ANNNode nextNode = new ANNNode(l, arbitraryLayerDepth);
+				nextLayer.add(nextNode);
+				// sets input nodes as, well, input nodes
+				if (j == 0){
+					nextNode.setInputNode(true);
+					// and output nodes as output nodes
+				} else if (j == arbitraryLayerDepth){
+					nextNode.setOutputNode(true);
+				}
 			}
 			nodes.add(nextLayer);
 		}
@@ -42,8 +54,15 @@ public class FeedForwardANN extends AbstractModel {
 
 	@Override
 	void execute() {
-		// TODO Auto-generated method stub
+		// TODO: this will need to somehow take input, so that we can generate the output and use backprop 
+		// when executing
 
+	}
+	
+	public double generateOutput(double[] inputs){
+		// TODO: this would be a great place to throw an error if we get the wrong number of inputs
+		this.inputs = inputs;
+		return -1.0;
 	}
 	
 	public void backProp(){
@@ -56,14 +75,15 @@ public class FeedForwardANN extends AbstractModel {
 		for (int l = 0; l < layers; l++){
 			// for each node in the layer:
 			for (int n = 0; n < nodes.get(l).size(); n++){
-				System.out.print("[" + l + ", " + n + "]  ");
+				System.out.print("[" + l + ", " + n + "] ");
 				double[] weights = nodes.get(l).get(n).getWeights();
+				System.out.print("< ");
 				for (int w = 0; w < weights.length; w++){
 					DecimalFormat twoDForm = new DecimalFormat("#.##");
 				    double weight = Double.valueOf(twoDForm.format(weights[w]));
-					System.out.print(" w" + w + ": " + weight);
+					System.out.print(weight + " ");
 				}
-				System.out.print(" ");
+				System.out.print(": " + nodes.get(l).get(n).getOutput() +" >  ");
 			}
 			System.out.println();
 			System.out.println();
