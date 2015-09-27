@@ -138,13 +138,9 @@ public class FeedForwardANN extends AbstractModel {
 		// or at least check that our number of inputs matches our number of input nodes.
 		this.inputs = inputs;
 		
-		// TODO: this is going to be broken. SO broken.
-		// TODO: I think this is right - just add bias to input vector (?)
-		this.inputs.add(bias);
-		
 		// steps: 
 		// 1. get inputs into input nodes
-		
+		// TODO: be sure you get the bias in the right place and so on
 		
 		
 		// runs through one layer at a time, EXCEPT input and output layers

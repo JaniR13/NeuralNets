@@ -193,5 +193,10 @@ public class ANNNode extends AbstractNode {
 	public void setFirstRun(boolean isFirstRun) {
 		this.isFirstRun = isFirstRun;
 	}
+	
+//	/** This should be used ONLY for bias node */
+//	public void setOutput(double o){
+//		output = o;
+//	}
 
 }
