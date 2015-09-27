@@ -26,7 +26,7 @@ public class ANNNodeTest {
 		double[] inputs = {1, 2, -1, 0, 1};
 		double output = (inputs[0]*weights[0])+(inputs[1]*weights[1])+(inputs[2]*weights[2])+(inputs[3]*weights[3])+(inputs[4]*weights[4]);
 		
-		assertEquals(output, n.calcOutput(inputs), 0.0005);
+		assertEquals(l.calcfx(output), n.calcOutput(inputs), 0.0005);
 	}
 
 }

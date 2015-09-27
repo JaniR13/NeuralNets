@@ -40,7 +40,7 @@ public class ANNNode extends AbstractNode {
 			output += (weights[i] * inputs[i]);
 		}
 		
-		return output;
+		return f.calcfx(output);
 	}
 	
 	public double[] getWeights() {
