@@ -42,14 +42,12 @@ public class FeedForwardANN extends AbstractModel {
 	 * Populates network with nodes
 	 */
 	private void createNetworkNodes(){
-		LogisticFunction l = new LogisticFunction();
-		
-		// creates individual nodes
+
 		for (int i = 0; i < layers; i++){
 			// creates one layer at a time
 			ArrayList<ANNNode> nextLayer = new ArrayList<ANNNode>();
 			for (int j = 0; j < arbitraryLayerDepth; j++){
-				ANNNode nextNode = new ANNNode(l);
+				ANNNode nextNode = new ANNNode(new LogisticFunction());
 				nextLayer.add(nextNode);
 				// these two act as sort of an ID for the node
 				nextNode.setLayer(i);
@@ -65,6 +63,31 @@ public class FeedForwardANN extends AbstractModel {
 			}
 			nodes.add(nextLayer);
 		}
+		
+		// adds a separate bias node
+		createBiasNode();
+	}
+	
+	/**
+	 * Creates bias node and adds it to network
+	 */
+	private void createBiasNode(){
+		ANNNode biasNode = new ANNNode(new LogisticFunction());
+		
+		// lives at largest index of first layer
+		biasNode.setLayer(0);
+		biasNode.setDepth(nodes.get(0).size());
+		biasNode.setInputNode(true);
+		
+		// adds every non-input node in the network as a descendant
+		for (int l = 1; l < layers; l++){
+			for (ANNNode n : nodes.get(l)){
+				biasNode.addDescendant(n);
+			}		
+		}
+		
+		// adds itself to the network
+		nodes.get(0).add(biasNode);
 	}
 	
 	/**
@@ -100,8 +123,8 @@ public class FeedForwardANN extends AbstractModel {
 
 	@Override
 	void execute() {
-		// TODO: this will need to somehow take input, so that we can generate the output and use backprop 
-		// when executing
+		// TODO: this will need to somehow take our input, so that we can generate the output and use backprop 
+		// when executing...
 
 	}
 	
@@ -121,6 +144,7 @@ public class FeedForwardANN extends AbstractModel {
 		
 		// steps: 
 		// 1. get inputs into input nodes
+		
 		
 		
 		// runs through one layer at a time, EXCEPT input and output layers

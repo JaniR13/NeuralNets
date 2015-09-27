@@ -24,15 +24,15 @@ public class FeedForwardANNTest {
 		//net.print();
 		ArrayList<ArrayList<ANNNode>> networkNodes = net.getNodes();
 		
-		// hidden node has 4 ancestors and 4 descendants
-		assertEquals(4, networkNodes.get(1).get(3).getAncestors().size());
+		// hidden node has 5 ancestors (including bias) and 4 descendants
+		assertEquals(5, networkNodes.get(1).get(3).getAncestors().size());
 		assertEquals(4, networkNodes.get(1).get(1).getDescendants().size());
 		
-		// input node has no ancestors and 4 descendants
+		// input node has 0 ancestors and 4 descendants
 		assertEquals(0, networkNodes.get(0).get(1).getAncestors().size());
 		assertEquals(4, networkNodes.get(0).get(2).getDescendants().size());
 		
-		// output node has 4 ancestors and no descendants
+		// output node has 5 ancestors (including bias) and no descendants
 		assertEquals(4, networkNodes.get(2).get(2).getAncestors().size());
 		assertEquals(0, networkNodes.get(2).get(3).getDescendants().size());	
 		
