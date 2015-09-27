@@ -49,7 +49,7 @@ public class FeedForwardANN extends AbstractModel {
 			// creates one layer at a time
 			ArrayList<ANNNode> nextLayer = new ArrayList<ANNNode>();
 			for (int j = 0; j < arbitraryLayerDepth; j++){
-				ANNNode nextNode = new ANNNode(l, arbitraryLayerDepth);
+				ANNNode nextNode = new ANNNode(l);
 				nextLayer.add(nextNode);
 				// these two act as sort of an ID for the node
 				nextNode.setLayer(i);

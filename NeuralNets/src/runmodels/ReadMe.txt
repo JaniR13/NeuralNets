@@ -52,9 +52,7 @@ RunModels.java
 
 * We're including the input nodes as a layer for FeedForward, so we need to make sure we know how to deal with that.
 
+* I have no idea how output nodes work or whether or not we're including them. 
+
 * We need some way to determine the structure of the network, i.e. how many layers and how many nodes per layer, AND
 	number of inputs.
-	
-* We don't yet have the bias node really included.
-
-* Need to find some way to define the ancestors and descendants of each node - right now, it's a list in the ANNNode class

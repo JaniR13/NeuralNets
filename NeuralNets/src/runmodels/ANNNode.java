@@ -28,37 +28,58 @@ public class ANNNode extends AbstractNode {
 	// output has no descendants
 	private boolean isOutputNode = false;
 	
+	// true if this is the first time network has been run
+	private boolean isFirstRun = true;
+	
 	/**
 	 * Constructs a perceptron
 	 * @param activationFunction an activation function (usually Logistic)
 	 * @param numInputs the number of inputs this node/perceptron will take
 	 */
-	public ANNNode(AbstractFunction activationFunction, int numInputs){
+	public ANNNode(AbstractFunction activationFunction){		
+		f = activationFunction;		
+	}
+
+	public void setInputs(ArrayList<Double> inputs){
+		this.inputs = inputs;
+		
+		// initializes weights randomly if this is the first time the input has been passed through the network
+		if (isFirstRun){
+			initializeWeights(this.inputs.size());
+		}
+	}
+	
+	/**
+	 * Called only by CalcOutput - it'll randomize weights every time it's called! 
+	 * TODO: if you want to reuse the network, need to call this to "reset"
+	 */
+	private void initializeWeights(int numInputs){
 		// creates random initial weights. 
 		weights = new ArrayList<Double>();
+		
 		for (int i = 0; i < numInputs; i++){
 			weights.add(Math.random());
 		}
-		
-		// TODO: Inputs will be passed in to another function (probably calcOutput())
-		
-		// TODO: pass in a new Logistic function
-		f = activationFunction;
-		
 	}
-
+	
 
 	/**
 	 * Calculates the output of the node: multiplies input vector by weight vector and sums
 	 */
 	@Override
 	public double calcOutput(ArrayList<Double> inputs) {
+		
+		setInputs(inputs);
+		
 		output = 0;
 		
 		// calculates \sum_i w_i x_i
 		for (int i = 0; i < inputs.size(); i++){
 			output += (weights.get(i) * inputs.get(i));
 		}
+		
+		// it's no longer the first run - we don't want to keep randomly initializing weights!
+		setFirstRun(false);
 		
 		return f.calcfx(output);
 	}
@@ -155,6 +176,14 @@ public class ANNNode extends AbstractNode {
 
 	public void setDepth(int depth) {
 		this.depth = depth;
+	}
+
+	public boolean isFirstRun() {
+		return isFirstRun;
+	}
+
+	public void setFirstRun(boolean isFirstRun) {
+		this.isFirstRun = isFirstRun;
 	}
 	
 	
