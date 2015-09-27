@@ -21,14 +21,27 @@ public class FeedForwardANN extends AbstractModel {
 	// TODO: this needs to go away once we figure out how to actually set this to something reasonable.
 	private int arbitraryLayerDepth = 4;
 	
+	/**
+	 * Creates a new feed-forward neural network
+	 * @param layers number of layers in the network, INCLUDING hidden layer
+	 */
 	public FeedForwardANN(int layers){
 		// TODO: refactor out into separate methods
 		
 		this.layers = layers;
 		
-		// makes list of nodes
 		// TODO: decide how deep we want our layers to be...for now, just arbitrarily chose 4, with 4 inputs
 		nodes = new ArrayList<ArrayList<ANNNode>>();
+		
+		createNetworkNodes();
+		createNetworkLinks();
+		
+	}
+	
+	/** 
+	 * Populates network with nodes
+	 */
+	private void createNetworkNodes(){
 		LogisticFunction l = new LogisticFunction();
 		
 		// creates individual nodes
@@ -52,7 +65,12 @@ public class FeedForwardANN extends AbstractModel {
 			}
 			nodes.add(nextLayer);
 		}
-		
+	}
+	
+	/**
+	 * Sets ancestor/descendant relationships for each node in network
+	 */
+	private void createNetworkLinks(){
 		// set descendants
 		for (int i = 0; i < layers-1; i++){
 			for (ANNNode n1 : nodes.get(i)){
