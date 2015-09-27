@@ -46,8 +46,13 @@ RunModels.java
 ############## KNOWN ISSUES: #############
 ##########################################	
 
-* Perceptron (ANNNode) does not yet use its activation function.
-
 * There is not yet a specific node class for KernelANN, but it can't use ANNNode (I think).
 
 * MeanSquareError function is not yet implemented or tested.
+
+* We haven't really settled if we want to count the input layer or not, and how to do that.
+
+* We need some way to determine the structure of the network, i.e. how many layers and how many nodes per layer, AND
+	number of inputs.
+	
+* We don't yet have the bias node included.
