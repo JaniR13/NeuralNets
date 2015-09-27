@@ -34,6 +34,10 @@ public class FeedForwardANN extends AbstractModel {
 			for (int j = 0; j < arbitraryLayerDepth; j++){
 				ANNNode nextNode = new ANNNode(l, arbitraryLayerDepth);
 				nextLayer.add(nextNode);
+				// these two act as sort of an ID for the node
+				nextNode.setLayer(i);
+				nextNode.setDepth(j);
+				
 				// sets input nodes as, well, input nodes
 				if (j == 0){
 					nextNode.setInputNode(true);
@@ -75,15 +79,7 @@ public class FeedForwardANN extends AbstractModel {
 		for (int l = 0; l < layers; l++){
 			// for each node in the layer:
 			for (int n = 0; n < nodes.get(l).size(); n++){
-				System.out.print("[" + l + ", " + n + "] ");
-				double[] weights = nodes.get(l).get(n).getWeights();
-				System.out.print("< ");
-				for (int w = 0; w < weights.length; w++){
-					DecimalFormat twoDForm = new DecimalFormat("#.##");
-				    double weight = Double.valueOf(twoDForm.format(weights[w]));
-					System.out.print(weight + " ");
-				}
-				System.out.print(": " + nodes.get(l).get(n).getOutput() +" >  ");
+				System.out.print(nodes.get(l).get(n).toString());
 			}
 			System.out.println();
 			System.out.println();

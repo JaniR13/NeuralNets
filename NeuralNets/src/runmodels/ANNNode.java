@@ -1,5 +1,6 @@
 package runmodels;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 //import java.lang.Math.*;
@@ -13,6 +14,10 @@ public class ANNNode extends AbstractNode {
 	private double[] weights;
 	// TODO: should probably set output to whatever wo is
 	private double output = 0;
+	
+	// these two only have meaning if it's part of a network
+	private int layer = 0;
+	private int depth = 0;
 	
 	// TODO: still need to add these
 	private ArrayList<ANNNode> descendants = new ArrayList<ANNNode>();
@@ -78,6 +83,22 @@ public class ANNNode extends AbstractNode {
 		}
 	}
 	
+	public String toString(){
+		String s = "";
+		
+		s += "[" + layer + ", " + depth + "] " + "< ";
+		
+		for (int w = 0; w < weights.length; w++) {
+			DecimalFormat twoDForm = new DecimalFormat("#.##");
+			double weight = Double.valueOf(twoDForm.format(weights[w]));
+			s += weight + " ";
+		}
+		
+		s += ": " + output +" >  ";
+		
+		return s;
+	}
+	
 	public double[] getWeights() {
 		return weights;
 	}
@@ -114,6 +135,26 @@ public class ANNNode extends AbstractNode {
 
 	public ArrayList<ANNNode> getAncestors() {
 		return ancestors;
+	}
+
+
+	public int getLayer() {
+		return layer;
+	}
+
+
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
+
+
+	public int getDepth() {
+		return depth;
+	}
+
+
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 	
 	
