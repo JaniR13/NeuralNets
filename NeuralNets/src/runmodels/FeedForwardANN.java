@@ -1,6 +1,6 @@
 package runmodels;
 
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class FeedForwardANN extends AbstractModel {
@@ -66,6 +66,21 @@ public class FeedForwardANN extends AbstractModel {
 	public double generateOutput(double[] inputs){
 		// TODO: this would be a great place to throw an error if we get the wrong number of inputs
 		this.inputs = inputs;
+		
+		// TODO: this is going to be broken. SO broken.
+		// TODO: figure out stuff with bias node
+		
+		// runs through one layer at a time
+		for (int i = 0; i < layers; i++){
+			for (ANNNode n : nodes.get(i)){
+				// steps: 
+				// 1. get inputs into input nodes
+				// 2. pass output of input nodes into first hidden layer
+				// 3. calculate output for each node in hidden layer, pass output into next layer
+				// 4. once you hit the output layer, save the output of that layer into a list/array and print
+			}	
+		}
+		
 		return -1.0;
 	}
 	
