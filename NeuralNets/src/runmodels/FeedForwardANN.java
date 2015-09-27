@@ -10,17 +10,20 @@ public class FeedForwardANN extends AbstractModel {
 	
 	private AbstractFunction lossFunction;
 	private ArrayList<Double> inputs;
-	private double bias;
+	private double bias = 1;
 	private double output;
 	private int layers;
 	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in case different
 	// layers have different numbers of nodes)
 	private ArrayList<ArrayList<ANNNode>> nodes;
 	
+	
 	// TODO: this needs to go away once we figure out how to actually set this to something reasonable.
 	private int arbitraryLayerDepth = 4;
 	
 	public FeedForwardANN(int layers){
+		// TODO: refactor out into separate methods
+		
 		this.layers = layers;
 		
 		// makes list of nodes
@@ -49,6 +52,26 @@ public class FeedForwardANN extends AbstractModel {
 			}
 			nodes.add(nextLayer);
 		}
+		
+		// set descendants
+		for (int i = 0; i < layers-1; i++){
+			for (ANNNode n1 : nodes.get(i)){
+				// sets every node in the next layer as a descendant
+				for (ANNNode n2 : nodes.get(i+1)){
+					n1.addDescendant(n2);
+				}
+			}
+		}
+		
+		// set ancestors
+		for (int i = 1; i < layers; i++){
+			for (ANNNode n1 : nodes.get(i)){
+				// sets every node in the previous layer as an ancestor
+				for (ANNNode n2 : nodes.get(i-1)){
+					n1.addAncestor(n2);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -64,12 +87,19 @@ public class FeedForwardANN extends AbstractModel {
 
 	}
 	
-	public double generateOutput(ArrayList<Double> inputs){
+	/**
+	 * Runs input through neural net and reports outputs
+	 * @param inputs ArrayList of Double-valued inputs, excluding bias
+	 * @return ArrayList of all outputs 
+	 */
+	public ArrayList<Double> generateOutput(ArrayList<Double> inputs){
 		// TODO: this would be a great place to throw an error if we get the wrong number of inputs
+		// or at least check that our number of inputs matches our number of input nodes.
 		this.inputs = inputs;
 		
 		// TODO: this is going to be broken. SO broken.
-		// TODO: figure out stuff with bias node
+		// TODO: I think this is right - just add bias to input vector (?)
+		this.inputs.add(bias);
 		
 		// steps: 
 		// 1. get inputs into input nodes
@@ -85,7 +115,7 @@ public class FeedForwardANN extends AbstractModel {
 		
 		// 4. once you hit the output layer, save the output of that layer into a list/array and print
 		
-		return -1.0;
+		return null;
 	}
 	
 	public void backProp(){
@@ -104,5 +134,15 @@ public class FeedForwardANN extends AbstractModel {
 			System.out.println();
 		}
 	}
+
+	public ArrayList<Double> getInputs() {
+		return inputs;
+	}
+
+	public ArrayList<ArrayList<ANNNode>> getNodes() {
+		return nodes;
+	}
+	
+	
 
 }
