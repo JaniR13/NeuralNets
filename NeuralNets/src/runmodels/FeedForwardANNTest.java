@@ -34,7 +34,10 @@ public class FeedForwardANNTest {
 		
 		// input node has 0 ancestors and 4 descendants
 		assertEquals(0, networkNodes.get(0).get(1).getAncestors().size());
-		assertEquals(4, networkNodes.get(0).get(2).getDescendants().size());
+		assertEquals(4, networkNodes.get(0).get(3).getDescendants().size());
+		
+		// bias node has 0 ancestors and 8 descendants (rest of network)
+		assertEquals(8, networkNodes.get(0).get(4).getDescendants().size());
 		
 		// output node has 5 ancestors (including bias) and no descendants
 		assertEquals(4, networkNodes.get(2).get(2).getAncestors().size());
@@ -42,6 +45,7 @@ public class FeedForwardANNTest {
 		
 	}
 	
+	/*
 	@Test
 	public void testFirstLayerOutput(){
 		FeedForwardANN net = new FeedForwardANN(4);

@@ -27,6 +27,7 @@ public class ANNNode extends AbstractNode {
 	private boolean isInputNode = false;
 	// output has no descendants
 	private boolean isOutputNode = false;
+	private boolean isBias = false;
 
 	// true if this is the first time network has been run
 	private boolean isFirstRun = true;
@@ -155,6 +156,14 @@ public class ANNNode extends AbstractNode {
 
 	public void setInputNode(boolean isInputNode) {
 		this.isInputNode = isInputNode;
+	}
+	
+	public boolean isBiasNode(){
+		return isBias;
+	}
+	
+	public void setIsBiasNode(boolean isBias){
+		this.isBias = isBias;
 	}
 
 	public boolean isOutputNode() {

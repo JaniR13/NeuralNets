@@ -103,11 +103,13 @@ public class FeedForwardANN extends AbstractModel {
 		for (int l = 1; l < layers; l++) {
 			for (ANNNode n : nodes.get(l)) {
 				biasNode.addDescendant(n);
+				System.out.println("Bias node descendant: " + "<" + n.getLayer() + ", " +n.getDepth() + ">");
 			}
 		}
 
 		// sets its output 
 		biasNode.setOutput(bias);
+		biasNode.setIsBiasNode(true);
 		// adds itself to the network
 		nodes.get(0).add(biasNode);
 		
@@ -122,7 +124,10 @@ public class FeedForwardANN extends AbstractModel {
 			for (ANNNode n1 : nodes.get(i)) {
 				// sets every node in the next layer as a descendant
 				for (ANNNode n2 : nodes.get(i + 1)) {
-					n1.addDescendant(n2);
+					// DON'T DOUBLE COUNT BIAS NODE
+					if (!n1.isBiasNode()){
+						n1.addDescendant(n2);
+					}
 				}
 			}
 		}
@@ -168,12 +173,7 @@ public class FeedForwardANN extends AbstractModel {
 		createNetworkLinks();
 
 		// steps:
-		// 1. get inputs into input nodes
-		// TODO: be sure you get the bias in the right place and so on
-		// TODO: to do this: maintain an ArrayList of inputs for each node and
-		// add the output of the bias to it before shipping along
-		
-		// set outputs for input nodes, EXCEPT bias node, which 
+		// 1. set outputs for input nodes, EXCEPT bias node, which 
 		// had its input set when it was created
 		for (int i = 0; i < nodes.get(0).size()-1; i++){
 			nodes.get(0).get(i).setOutput(inputs.get(i));
