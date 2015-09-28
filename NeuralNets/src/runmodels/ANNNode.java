@@ -41,21 +41,15 @@ public class ANNNode extends AbstractNode {
 	 */
 	public ANNNode(AbstractFunction activationFunction) {
 		f = activationFunction;
+		// starts list of inputs
+		inputs = new ArrayList<Double>();
 	}
 
-	public void setInputs(ArrayList<Double> inputs) {
-		this.inputs = inputs;
-
-		// initializes weights randomly if this is the first time the input has
-		// been passed through the network
-		if (isFirstRun) {
-			initializeWeights(this.inputs.size());
-		}
-	}
 
 	/**
 	 * Called only by CalcOutput - it'll randomize weights every time it's
-	 * called! TODO: if you want to reuse the network, need to call this to
+	 * called! 
+	 * TODO: if you want to reuse the network, need to call this to
 	 * "reset"
 	 */
 	private void initializeWeights(int numInputs) {
@@ -69,15 +63,17 @@ public class ANNNode extends AbstractNode {
 
 	/**
 	 * Calculates the output of the node: multiplies input vector by weight
-	 * vector and sums
+	 * vector and sums. ASSUMES ALL INPUTS HAVE ALREADY BEEN ADDED.
 	 */
 	@Override
-	public double calcOutput(ArrayList<Double> inputs) {
+	public double calcOutput() {
 
-		if (!isInputNode) {
-			setInputs(inputs);
+		//if (!isInputNode) {
 
 			output = 0;
+			if (isFirstRun) {
+				initializeWeights(this.inputs.size());
+			}
 
 			// calculates \sum_i w_i x_i
 			for (int i = 0; i < inputs.size(); i++) {
@@ -88,12 +84,14 @@ public class ANNNode extends AbstractNode {
 			// initializing weights!
 			setFirstRun(false);
 
-			return f.calcfx(output);
-		} else {
-			// todo: if this is an input node, it just outputs its inputs. Which
+			output = f.calcfx(output);
+			
+			return output;
+		/* } else {
+			// if this is an input node, it just outputs its inputs. Which
 			// should be only one thing...
 			return inputs.get(0);
-		}
+		} */
 	}
 
 	/**
@@ -120,6 +118,11 @@ public class ANNNode extends AbstractNode {
 		if (!isOutputNode) {
 			descendants.add(n);
 		}
+	}
+	
+	/** Adds to the variable's list of inputs, but does NOT initiate calculation */
+	public void addInput(double i){
+		inputs.add(i);
 	}
 
 	public String toString() {
@@ -194,9 +197,9 @@ public class ANNNode extends AbstractNode {
 		this.isFirstRun = isFirstRun;
 	}
 	
-//	/** This should be used ONLY for bias node */
-//	public void setOutput(double o){
-//		output = o;
-//	}
+	/** This should be used ONLY for input nodes */
+	public void setOutput(double o){
+		output = o;
+	}
 
 }

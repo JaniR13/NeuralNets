@@ -12,14 +12,13 @@ public class ANNNodeTest {
 	public void testInitWeights() {
 		LogisticFunction l = new LogisticFunction();
 		ANNNode n = new ANNNode(l);
-		ArrayList<Double> inputs = new ArrayList<Double>();
-		inputs.add(1.0);
-		inputs.add(2.0);
-		inputs.add(-1.0);
-		inputs.add(0.0);
-		inputs.add(1.0);
+		n.addInput(1.0);
+		n.addInput(2.0);
+		n.addInput(-1.0);
+		n.addInput(0.0);
+		n.addInput(1.0);
 		// note: this output value doesn't matter, but you need to call calcOutput to initialize the weights :)
-		double networkOutput = n.calcOutput(inputs);
+		double networkOutput = n.calcOutput();
 				
 		ArrayList<Double> weights = n.getWeights();
 		System.out.println("Weights: ");
@@ -29,7 +28,7 @@ public class ANNNodeTest {
 		System.out.println();
 		
 		// check that running again won't change weights (not randomly intializing every time)
-		n.calcOutput(inputs);
+		n.calcOutput();
 		ArrayList<Double> weights2 = n.getWeights();
 		for (int i = 0; i < weights.size(); i++){
 			assertEquals(true, weights.get(i).equals(weights2.get(i)));
@@ -53,7 +52,12 @@ public class ANNNodeTest {
 		inputs.add(-1.0);
 		inputs.add(0.0);
 		inputs.add(1.0);
-		double networkOutput = n.calcOutput(inputs);
+		n.addInput(1.0);
+		n.addInput(2.0);
+		n.addInput(-1.0);
+		n.addInput(0.0);
+		n.addInput(1.0);
+		double networkOutput = n.calcOutput();
 		
 		ArrayList<Double> weights = n.getWeights();
 		double output = (inputs.get(0)*weights.get(0))+(inputs.get(1)*weights.get(1))+(inputs.get(2)*weights.get(2))+(inputs.get(3)*weights.get(3))+(inputs.get(4)*weights.get(4));

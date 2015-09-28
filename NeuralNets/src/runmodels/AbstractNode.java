@@ -13,7 +13,7 @@ public abstract class AbstractNode {
 	}
 	
 
-	abstract double calcOutput(ArrayList<Double> inputs);
+	abstract double calcOutput();
 	
 	
 
