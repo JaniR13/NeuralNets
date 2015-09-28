@@ -28,25 +28,24 @@ public class FeedForwardANN extends AbstractModel {
 	 *            number of layers in the network, INCLUDING hidden layer
 	 */
 	public FeedForwardANN(int layers) {
-		// TODO: refactor out into separate methods
-
 		this.layers = layers;
 
 		// TODO: decide how deep we want our layers to be...for now, just
 		// arbitrarily chose 4, with 4 inputs
 		nodes = new ArrayList<ArrayList<ANNNode>>();
-
 		createNetworkNodes();
-		createNetworkLinks();
 
 	}
 
 	/**
 	 * Populates network with nodes
 	 */
-	private void createNetworkNodes() {
+	protected void createNetworkNodes() {
+		// creates EMPTY input layer
+		ArrayList<ANNNode> inputLayer = new ArrayList<ANNNode>();
+		nodes.add(inputLayer);
 
-		for (int i = 0; i < layers; i++) {
+		for (int i = 1; i < layers; i++) {
 			// creates one layer at a time
 			ArrayList<ANNNode> nextLayer = new ArrayList<ANNNode>();
 			for (int j = 0; j < arbitraryLayerDepth; j++) {
@@ -56,18 +55,36 @@ public class FeedForwardANN extends AbstractModel {
 				nextNode.setLayer(i);
 				nextNode.setDepth(j);
 
-				// sets input nodes as, well, input nodes
-				if (j == 0) {
-					nextNode.setInputNode(true);
-					// and output nodes as output nodes
-				} else if (j == arbitraryLayerDepth) {
+				// sets output nodes as, well, input nodes
+				if (j == arbitraryLayerDepth) {
 					nextNode.setOutputNode(true);
 				}
 			}
 			nodes.add(nextLayer);
 		}
-
-		// adds a separate bias node
+	}
+	
+	/** Creates input-layer nodes once inputs are all given */
+	private void populateInputLayer(){
+		for (int i = 0; i < inputs.size(); i++){
+			ANNNode nextNode = new ANNNode(new LogisticFunction());
+			nextNode.setLayer(0);
+			nextNode.setDepth(i);
+			nextNode.setInputNode(true);
+			nodes.get(0).add(nextNode);
+		}		
+		createBiasNode();
+	}
+	
+	/** Creates input-layer nodes with a number of given inputs - TESTING ONLY */
+	protected void populateInputLayer(int numLayers){
+		for (int i = 0; i < numLayers; i++){
+			ANNNode nextNode = new ANNNode(new LogisticFunction());
+			nextNode.setLayer(0);
+			nextNode.setDepth(i);
+			nextNode.setInputNode(true);
+			nodes.get(0).add(nextNode);
+		}		
 		createBiasNode();
 	}
 
@@ -79,7 +96,7 @@ public class FeedForwardANN extends AbstractModel {
 
 		// lives at largest index of first layer
 		biasNode.setLayer(0);
-		biasNode.setDepth(nodes.get(0).size());
+		biasNode.setDepth(nodes.get(0).size()+1);
 		biasNode.setInputNode(true);
 
 		// adds every non-input node in the network as a descendant
@@ -99,7 +116,7 @@ public class FeedForwardANN extends AbstractModel {
 	/**
 	 * Sets ancestor/descendant relationships for each node in network
 	 */
-	private void createNetworkLinks() {
+	protected void createNetworkLinks() {
 		// set descendants
 		for (int i = 0; i < layers - 1; i++) {
 			for (ANNNode n1 : nodes.get(i)) {
@@ -143,11 +160,12 @@ public class FeedForwardANN extends AbstractModel {
 	 * @return ArrayList of all outputs
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
-		// TODO: this would be a great place to throw an error if we get the
-		// wrong number of inputs
-		// or at least check that our number of inputs matches our number of
+		// TODO: this would be a great place to throw an error if our number of inputs doesn't match our number of
 		// input nodes.
 		this.inputs = inputs;
+		// puts nodes into first layer
+		populateInputLayer();
+		createNetworkLinks();
 
 		// steps:
 		// 1. get inputs into input nodes
@@ -158,7 +176,7 @@ public class FeedForwardANN extends AbstractModel {
 		// set outputs for input nodes, EXCEPT bias node, which 
 		// had its input set when it was created
 		for (int i = 0; i < nodes.get(0).size()-1; i++){
-			
+			nodes.get(0).get(i).setOutput(inputs.get(i));
 		}
 
 		// runs through one layer at a time, EXCEPT input and output layers

@@ -21,6 +21,10 @@ public class FeedForwardANNTest {
 		// recall, arbitrary layer depth = 4
 		
 		FeedForwardANN net = new FeedForwardANN(3);
+		net.createNetworkNodes();
+		// 4 inputs
+		net.populateInputLayer(4);
+		net.createNetworkLinks();
 		//net.print();
 		ArrayList<ArrayList<ANNNode>> networkNodes = net.getNodes();
 		
@@ -39,6 +43,26 @@ public class FeedForwardANNTest {
 	}
 	
 	@Test
+	public void testFirstLayerOutput(){
+		FeedForwardANN net = new FeedForwardANN(4);
+		ArrayList<Double> inputs = new ArrayList<Double>();
+		inputs.add(1.0);
+		inputs.add(2.0);
+		inputs.add(-1.0);
+		inputs.add(0.0);
+		inputs.add(3.0);
+		net.generateOutput(inputs);	
+		
+		ArrayList<ArrayList<ANNNode>> networkNodes = net.getNodes();
+		assertEquals(1.0, networkNodes.get(0).get(0).getOutput(), .00001);
+		assertEquals(2.0, networkNodes.get(0).get(1).getOutput(), .00001);
+		assertEquals(-1.0, networkNodes.get(0).get(2).getOutput(), .00001);
+		assertEquals(0.0, networkNodes.get(0).get(3).getOutput(), .00001);
+		assertEquals(3.0, networkNodes.get(0).get(4).getOutput(), .00001);
+		assertEquals(1.0, networkNodes.get(0).get(5).getOutput(), .00001);
+	} 
+	
+/*	@Test
 	public void testGenerateOutput(){
 		FeedForwardANN net = new FeedForwardANN(4);
 		
@@ -48,11 +72,9 @@ public class FeedForwardANNTest {
 		inputs.add(-1.0);
 		inputs.add(0.0);
 		inputs.add(1.0);
-		net.generateOutput(inputs);
-		// checking to see bias is added correctly
-		assertEquals(6, net.getInputs().size());
-		
+		net.generateOutput(inputs);	
 		
 	}
+	*/
 
 }
