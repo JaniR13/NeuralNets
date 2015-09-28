@@ -8,13 +8,13 @@ import org.junit.Test;
 
 public class FeedForwardANNTest {
 
-	@Test
+	/* @Test
 	public void testPrint() {
 		FeedForwardANN net = new FeedForwardANN(3);
 		// TODO: this is now broken since we changed how weight initialization for a perceptron works
 		// should be fixed later, not worrying about it yet
 		//net.print();
-	}
+	} */
 	
 	@Test
 	public void testNetworkStructure(){
@@ -45,7 +45,7 @@ public class FeedForwardANNTest {
 		
 	}
 	
-	/*
+	
 	@Test
 	public void testFirstLayerOutput(){
 		FeedForwardANN net = new FeedForwardANN(4);
@@ -56,6 +56,7 @@ public class FeedForwardANNTest {
 		inputs.add(0.0);
 		inputs.add(3.0);
 		net.generateOutput(inputs);	
+
 		
 		ArrayList<ArrayList<ANNNode>> networkNodes = net.getNodes();
 		assertEquals(1.0, networkNodes.get(0).get(0).getOutput(), .00001);
@@ -66,19 +67,20 @@ public class FeedForwardANNTest {
 		assertEquals(1.0, networkNodes.get(0).get(5).getOutput(), .00001);
 	} 
 	
-/*	@Test
+	@Test
 	public void testGenerateOutput(){
 		FeedForwardANN net = new FeedForwardANN(4);
-		
 		ArrayList<Double> inputs = new ArrayList<Double>();
 		inputs.add(1.0);
 		inputs.add(2.0);
 		inputs.add(-1.0);
 		inputs.add(0.0);
-		inputs.add(1.0);
+		inputs.add(3.0);
 		net.generateOutput(inputs);	
 		
+		net.print();
+		
 	}
-	*/
+	
 
 }

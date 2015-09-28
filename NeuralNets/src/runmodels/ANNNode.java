@@ -46,11 +46,9 @@ public class ANNNode extends AbstractNode {
 		inputs = new ArrayList<Double>();
 	}
 
-
 	/**
 	 * Called only by CalcOutput - it'll randomize weights every time it's
-	 * called! 
-	 * TODO: if you want to reuse the network, need to call this to
+	 * called! TODO: if you want to reuse the network, need to call this to
 	 * "reset"
 	 */
 	private void initializeWeights(int numInputs) {
@@ -69,30 +67,23 @@ public class ANNNode extends AbstractNode {
 	@Override
 	public double calcOutput() {
 
-		//if (!isInputNode) {
-
+		if (isFirstRun) {
+			initializeWeights(this.inputs.size());
+		}
+		
+		if (!isInputNode) {
 			output = 0;
-			if (isFirstRun) {
-				initializeWeights(this.inputs.size());
-			}
-
 			// calculates \sum_i w_i x_i
 			for (int i = 0; i < inputs.size(); i++) {
 				output += (weights.get(i) * inputs.get(i));
 			}
-
-			// it's no longer the first run - we don't want to keep randomly
-			// initializing weights!
-			setFirstRun(false);
-
 			output = f.calcfx(output);
-			
-			return output;
-		/* } else {
-			// if this is an input node, it just outputs its inputs. Which
-			// should be only one thing...
-			return inputs.get(0);
-		} */
+		} 
+		// it's no longer the first run - we don't want to keep randomly
+		// initializing weights!
+		setFirstRun(false);
+		
+		return output;
 	}
 
 	/**
@@ -120,10 +111,16 @@ public class ANNNode extends AbstractNode {
 			descendants.add(n);
 		}
 	}
-	
+
 	/** Adds to the variable's list of inputs, but does NOT initiate calculation */
-	public void addInput(double i){
+	public void addInput(double i) {
 		inputs.add(i);
+	}
+	
+	public void clearInputs(){
+		// TODO: to be used after a set of inputs has been run through, so that we don't just accumulate new inputs
+		// on top of previously used ones
+		inputs.clear();
 	}
 
 	public String toString() {
@@ -131,6 +128,8 @@ public class ANNNode extends AbstractNode {
 
 		s += "[" + layer + ", " + depth + "] " + "< ";
 
+		System.out.print("number of weights:" + weights.size() + "  ");
+		// TODO: should have a weight for every OUTPUT, not every INPUT
 		for (int w = 0; w < weights.size(); w++) {
 			DecimalFormat twoDForm = new DecimalFormat("#.##");
 			double weight = Double.valueOf(twoDForm.format(weights.get(w)));
@@ -157,12 +156,12 @@ public class ANNNode extends AbstractNode {
 	public void setInputNode(boolean isInputNode) {
 		this.isInputNode = isInputNode;
 	}
-	
-	public boolean isBiasNode(){
+
+	public boolean isBiasNode() {
 		return isBias;
 	}
-	
-	public void setIsBiasNode(boolean isBias){
+
+	public void setIsBiasNode(boolean isBias) {
 		this.isBias = isBias;
 	}
 
@@ -205,9 +204,9 @@ public class ANNNode extends AbstractNode {
 	public void setFirstRun(boolean isFirstRun) {
 		this.isFirstRun = isFirstRun;
 	}
-	
+
 	/** This should be used ONLY for input nodes */
-	public void setOutput(double o){
+	public void setOutput(double o) {
 		output = o;
 	}
 

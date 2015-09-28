@@ -10,7 +10,7 @@ public class FeedForwardANN extends AbstractModel {
 	private AbstractFunction lossFunction;
 	private ArrayList<Double> inputs;
 	private double bias = 1;
-	private double output;
+	private ArrayList<Double> output;
 	private int layers;
 	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in
 	// case different
@@ -29,6 +29,7 @@ public class FeedForwardANN extends AbstractModel {
 	 */
 	public FeedForwardANN(int layers) {
 		this.layers = layers;
+		output = new ArrayList<Double>();
 
 		// TODO: decide how deep we want our layers to be...for now, just
 		// arbitrarily chose 4, with 4 inputs
@@ -77,8 +78,8 @@ public class FeedForwardANN extends AbstractModel {
 	}
 	
 	/** Creates input-layer nodes with a number of given inputs - TESTING ONLY */
-	protected void populateInputLayer(int numLayers){
-		for (int i = 0; i < numLayers; i++){
+	protected void populateInputLayer(int numInputs){
+		for (int i = 0; i < numInputs; i++){
 			ANNNode nextNode = new ANNNode(new LogisticFunction());
 			nextNode.setLayer(0);
 			nextNode.setDepth(i);
@@ -96,14 +97,14 @@ public class FeedForwardANN extends AbstractModel {
 
 		// lives at largest index of first layer
 		biasNode.setLayer(0);
-		biasNode.setDepth(nodes.get(0).size()+1);
+		biasNode.setDepth(nodes.get(0).size());
+		System.out.println("Added bias node at " + biasNode.getLayer() + biasNode.getDepth());
 		biasNode.setInputNode(true);
 
 		// adds every non-input node in the network as a descendant
 		for (int l = 1; l < layers; l++) {
 			for (ANNNode n : nodes.get(l)) {
 				biasNode.addDescendant(n);
-				System.out.println("Bias node descendant: " + "<" + n.getLayer() + ", " +n.getDepth() + ">");
 			}
 		}
 
@@ -177,21 +178,37 @@ public class FeedForwardANN extends AbstractModel {
 		// had its input set when it was created
 		for (int i = 0; i < nodes.get(0).size()-1; i++){
 			nodes.get(0).get(i).setOutput(inputs.get(i));
+			nodes.get(0).get(i).calcOutput();
 		}
 
-		// runs through one layer at a time, EXCEPT input and output layers
-		for (int i = 1; i < layers - 1; i++) {
+		// runs through one layer at a time, EXCEPT output layer
+		for (int i = 0; i < layers - 1; i++) {
 			for (ANNNode n : nodes.get(i)) {
-				// 2. pass output of input nodes into first hidden layer
-				// 3. calculate output for each node in hidden layer, pass
-				// output into next layer
+				// calculates output of this node
+				double nodeOutput = n.calcOutput();
+				for (ANNNode d : n.getDescendants()){
+					// adds this node's output to the inputs of its descendants
+					d.addInput(nodeOutput);
+					//System.out.println("Node " + n.getLayer() + n.getDepth() + " passed an input to node " + d.getLayer() + d.getDepth());
+				}
 			}
+			System.out.println(" ");
 		}
 
 		// 4. once you hit the output layer, save the output of that layer into
 		// a list/array and print
+		
+		for (ANNNode n : nodes.get(layers-1)){
+			output.add(n.calcOutput());
+		}
+		
+		System.out.println("Outputs:");
+		for (int i = 0; i < output.size(); i++){
+			System.out.println(output.get(i));
+		}
+		System.out.println();
 
-		return null;
+		return output;
 	}
 
 	public void backProp() {
