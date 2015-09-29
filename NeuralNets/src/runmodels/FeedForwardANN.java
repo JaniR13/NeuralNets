@@ -30,9 +30,6 @@ public class FeedForwardANN extends AbstractModel {
 	public FeedForwardANN(int layers) {
 		this.layers = layers;
 		output = new ArrayList<Double>();
-
-		// TODO: decide how deep we want our layers to be...for now, just
-		// arbitrarily chose 4, with 4 inputs
 		nodes = new ArrayList<ArrayList<ANNNode>>();
 		createNetworkNodes();
 
@@ -166,8 +163,6 @@ public class FeedForwardANN extends AbstractModel {
 	 * @return ArrayList of all outputs
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
-		// TODO: this would be a great place to throw an error if our number of inputs doesn't match our number of
-		// input nodes.
 		this.inputs = inputs;
 		// puts nodes into first layer
 		populateInputLayer();
@@ -197,7 +192,6 @@ public class FeedForwardANN extends AbstractModel {
 
 		// 4. once you hit the output layer, save the output of that layer into
 		// a list/array and print
-		
 		for (ANNNode n : nodes.get(layers-1)){
 			output.add(n.calcOutput());
 		}
@@ -212,7 +206,7 @@ public class FeedForwardANN extends AbstractModel {
 	}
 
 	public void backProp() {
-
+		// TODO
 	}
 
 	/** To be used for testing */

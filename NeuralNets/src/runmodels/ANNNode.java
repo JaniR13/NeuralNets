@@ -12,7 +12,6 @@ public class ANNNode extends AbstractNode {
 	private ArrayList<Double> inputs;
 	// TODO: do the weights need to be < 1?
 	private ArrayList<Double> weights;
-	// TODO: should probably set output to whatever wo is
 	private double output = 0;
 
 	// these two only have meaning if it's part of a network
@@ -49,7 +48,7 @@ public class ANNNode extends AbstractNode {
 	/**
 	 * Called only by CalcOutput - it'll randomize weights every time it's
 	 * called! TODO: if you want to reuse the network, need to call this to
-	 * "reset"
+	 * "reset", along with clearInputs();
 	 */
 	private void initializeWeights(int numInputs) {
 		// creates random initial weights.
@@ -125,18 +124,17 @@ public class ANNNode extends AbstractNode {
 
 	public String toString() {
 		String s = "";
-
 		s += "[" + layer + ", " + depth + "] " + "< ";
 
-		System.out.print("number of weights:" + weights.size() + "  ");
-		// TODO: should have a weight for every OUTPUT, not every INPUT
+		//System.out.print("# weights: " + weights.size() + " ");
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		DecimalFormat threeDForm = new DecimalFormat("#.###");
 		for (int w = 0; w < weights.size(); w++) {
-			DecimalFormat twoDForm = new DecimalFormat("#.##");
 			double weight = Double.valueOf(twoDForm.format(weights.get(w)));
 			s += weight + " ";
 		}
 
-		s += ": " + output + " >  ";
+		s += ": " + Double.valueOf(threeDForm.format(output)) + " >  ";
 
 		return s;
 	}
