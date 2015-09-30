@@ -7,7 +7,7 @@ public class FeedForwardANN extends AbstractModel {
 
 	// https://svn.cms.waikato.ac.nz/svn/weka/branches/stable-3-2-1/weka/classifiers/neural/NeuralNetwork.java
 
-	private AbstractFunction lossFunction;
+	//private AbstractFunction lossFunction;
 	private ArrayList<Double> inputs;
 	private double bias = 1;
 	private ArrayList<Double> output;
@@ -209,10 +209,15 @@ public class FeedForwardANN extends AbstractModel {
 		// TODO: case 1 - output layer
 		// foreach (node N in output layer)
 			// foreach (weight w in node N)
-				// w += eta * -1 * loss.calcDerivError(w.output, expectedOutput(w)) 
-				// * expectedOutput(w) * (1-expectedOutput(w)) * n.input(associated with w)
+				// w += eta * -1 * loss.calcDerivError(n.output, expectedOutput(w)) 
+				// * output(w) * (1-output(w)) * n.input(associated with w)
 		
 		// TODO: case 2 - hidden units
+		// foreach(layer L working backward from last hidden layer)
+			// foreach(node N in layer L)
+				// foreach (weight w in node N)
+					// w += eta * (n.output * (1-n.output) * sumOfDownstream(delta(downstream) * weight(downstream)) * w
+		
 	}
 
 	/** To be used for testing */

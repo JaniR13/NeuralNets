@@ -59,21 +59,6 @@ public class FeedForwardANNTest {
 		assertEquals(1.0, networkNodes.get(0).get(5).getOutput(), .00001);
 	} 
 	
-	/*@Test
-	public void testGenerateOutput(){
-		FeedForwardANN net = new FeedForwardANN(4);
-		ArrayList<Double> inputs = new ArrayList<Double>();
-		inputs.add(1.0);
-		inputs.add(2.0);
-		inputs.add(-1.0);
-		inputs.add(0.0);
-		inputs.add(3.0);
-		net.generateOutput(inputs);	
-		
-		net.print();
-		
-	}*/
-	
 	@Test
 	public void testGenerateOutput2(){
 		FeedForwardANN net = new FeedForwardANN(3);
