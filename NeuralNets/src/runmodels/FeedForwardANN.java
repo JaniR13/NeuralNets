@@ -206,7 +206,13 @@ public class FeedForwardANN extends AbstractModel {
 	}
 
 	public void backProp() {
-		// TODO
+		// TODO: case 1 - output layer
+		// foreach (node N in output layer)
+			// foreach (weight w in node N)
+				// w += eta * -1 * loss.calcDerivError(w.output, expectedOutput(w)) 
+				// * expectedOutput(w) * (1-expectedOutput(w)) * n.input(associated with w)
+		
+		// TODO: case 2 - hidden units
 	}
 
 	/** To be used for testing */

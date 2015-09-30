@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ANNNode extends AbstractNode {
 
 	private AbstractFunction f;
-	private AbstractFunction lossFunction;
+	private MeanSquaredError loss; 
 	private ArrayList<Double> inputs;
 	// TODO: do the weights need to be < 1?
 	private ArrayList<Double> weights;
@@ -43,6 +43,7 @@ public class ANNNode extends AbstractNode {
 		f = activationFunction;
 		// starts list of inputs
 		inputs = new ArrayList<Double>();
+		loss = new MeanSquaredError();
 	}
 
 	/**
@@ -84,6 +85,14 @@ public class ANNNode extends AbstractNode {
 		
 		return output;
 	}
+	
+	/**
+	 * Calculates error using the node's loss function
+	 */
+	public double calcError(double expectedOutput){
+		return loss.calcError(output, expectedOutput);
+	}
+	
 
 	/**
 	 * Adds input node to this node's list of ancestors, i.e. those nodes from
