@@ -31,7 +31,7 @@ public class MeanSquaredError extends AbstractFunction {
 		int n = predictions.size();
 		double error = 0;
 		for (int i = 0; i < n; i++){
-			error += (predictions.get(i) - expectedOutputs.get(i));
+			error += (predictions.get(i) - expectedOutputs.get(i))*(predictions.get(i) - expectedOutputs.get(i));
 		}	
 		return error/n;
 	}

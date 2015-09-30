@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ANNNode extends AbstractNode {
 
 	private AbstractFunction f;
-	private MeanSquaredError loss; 
+	private MeanSquaredError loss;
 	private ArrayList<Double> inputs;
 	// TODO: do the weights need to be < 1?
 	private ArrayList<Double> weights;
@@ -70,29 +70,27 @@ public class ANNNode extends AbstractNode {
 		if (isFirstRun) {
 			initializeWeights(this.inputs.size());
 		}
-		
-		if (!isInputNode) {
-			output = 0;
-			// calculates \sum_i w_i x_i
-			for (int i = 0; i < inputs.size(); i++) {
-				output += (weights.get(i) * inputs.get(i));
-			}
-			output = f.calcfx(output);
-		} 
+
+		output = 0;
+		// calculates \sum_i w_i x_i
+		for (int i = 0; i < inputs.size(); i++) {
+			output += (weights.get(i) * inputs.get(i));
+		}
+		output = f.calcfx(output);
+
 		// it's no longer the first run - we don't want to keep randomly
 		// initializing weights!
 		setFirstRun(false);
-		
+
 		return output;
 	}
-	
+
 	/**
 	 * Calculates error using the node's loss function
 	 */
-	public double calcError(double expectedOutput){
+	public double calcError(double expectedOutput) {
 		return loss.calcError(output, expectedOutput);
 	}
-	
 
 	/**
 	 * Adds input node to this node's list of ancestors, i.e. those nodes from
@@ -124,9 +122,10 @@ public class ANNNode extends AbstractNode {
 	public void addInput(double i) {
 		inputs.add(i);
 	}
-	
-	public void clearInputs(){
-		// TODO: to be used after a set of inputs has been run through, so that we don't just accumulate new inputs
+
+	public void clearInputs() {
+		// TODO: to be used after a set of inputs has been run through, so that
+		// we don't just accumulate new inputs
 		// on top of previously used ones
 		inputs.clear();
 	}
@@ -135,7 +134,7 @@ public class ANNNode extends AbstractNode {
 		String s = "";
 		s += "[" + layer + ", " + depth + "] " + "< ";
 
-		//System.out.print("# weights: " + weights.size() + " ");
+		// System.out.print("# weights: " + weights.size() + " ");
 		DecimalFormat twoDForm = new DecimalFormat("#.##");
 		DecimalFormat threeDForm = new DecimalFormat("#.###");
 		for (int w = 0; w < weights.size(); w++) {
@@ -154,6 +153,10 @@ public class ANNNode extends AbstractNode {
 
 	public double getOutput() {
 		return output;
+	}
+	
+	public ArrayList<Double> getInputs(){
+		return inputs;
 	}
 
 	public boolean isInputNode() {

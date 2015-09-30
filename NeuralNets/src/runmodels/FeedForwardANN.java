@@ -95,7 +95,6 @@ public class FeedForwardANN extends AbstractModel {
 		// lives at largest index of first layer
 		biasNode.setLayer(0);
 		biasNode.setDepth(nodes.get(0).size());
-		System.out.println("Added bias node at " + biasNode.getLayer() + biasNode.getDepth());
 		biasNode.setInputNode(true);
 
 		// adds every non-input node in the network as a descendant
@@ -106,8 +105,8 @@ public class FeedForwardANN extends AbstractModel {
 		}
 
 		// sets its output 
-		biasNode.setOutput(bias);
 		biasNode.setIsBiasNode(true);
+		biasNode.addInput(bias);
 		// adds itself to the network
 		nodes.get(0).add(biasNode);
 		
@@ -140,6 +139,18 @@ public class FeedForwardANN extends AbstractModel {
 			}
 		}
 	}
+	
+	/** Gives inputs to the input layer */
+	private void giveInputs(){
+		int numInputNodes = nodes.get(0).size();
+		
+		// all except bias node
+		// TODO: fix bias node in createBiasNode
+		for (int i = 0; i < numInputNodes-1; i++){
+			nodes.get(0).get(i).addInput(inputs.get(i));
+			nodes.get(0).get(i).calcOutput();
+		}
+	}
 
 	@Override
 	void compileResults() {
@@ -166,21 +177,18 @@ public class FeedForwardANN extends AbstractModel {
 		this.inputs = inputs;
 		// puts nodes into first layer
 		populateInputLayer();
+		// links nodes in network
 		createNetworkLinks();
-
-		// steps:
-		// 1. set outputs for input nodes, EXCEPT bias node, which 
-		// had its input set when it was created
-		for (int i = 0; i < nodes.get(0).size()-1; i++){
-			nodes.get(0).get(i).setOutput(inputs.get(i));
-			nodes.get(0).get(i).calcOutput();
-		}
+		// gives inputs to input nodes
+		giveInputs();
+		
 
 		// runs through one layer at a time, EXCEPT output layer
 		for (int i = 0; i < layers - 1; i++) {
 			for (ANNNode n : nodes.get(i)) {
 				// calculates output of this node
 				double nodeOutput = n.calcOutput();
+
 				for (ANNNode d : n.getDescendants()){
 					// adds this node's output to the inputs of its descendants
 					d.addInput(nodeOutput);
