@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class FeedForwardANNTest {
 
-	@Test
+	/**@Test
 	public void testNetworkStructure(){
 		// recall, arbitrary layer depth = 4
 		
@@ -35,7 +35,7 @@ public class FeedForwardANNTest {
 		assertEquals(4, networkNodes.get(2).get(2).getAncestors().size());
 		assertEquals(0, networkNodes.get(2).get(3).getDescendants().size());	
 		
-	}
+	} */
 	
 	// TODO: redo this test
 	/**
@@ -60,7 +60,7 @@ public class FeedForwardANNTest {
 		assertEquals(1.0, networkNodes.get(0).get(5).getOutput(), .00001);
 	} */
 	
-	@Test
+	/**@Test
 	public void testGenerateOutput2(){
 		FeedForwardANN net = new FeedForwardANN(3);
 		ArrayList<Double> inputs = new ArrayList<Double>();
@@ -72,7 +72,7 @@ public class FeedForwardANNTest {
 		
 		net.print();
 		
-	}
+	} */
 	
 	/**
 	@Test
@@ -92,5 +92,45 @@ public class FeedForwardANNTest {
 		net.print();
 		
 	} */
+	
+	@Test
+	public void backPropTestOutputUnitsBigChange(){
+		FeedForwardANN net = new FeedForwardANN(3);
+		ArrayList<Double> inputs = new ArrayList<Double>();
+		inputs.add(1.0);
+		inputs.add(2.0);
+		inputs.add(-1.0);
+		inputs.add(3.0);
+		
+		ArrayList<Double> expectedOutputs = new ArrayList<Double>();
+		expectedOutputs.add(5.0);
+		expectedOutputs.add(5.0);
+		expectedOutputs.add(5.0);
+		expectedOutputs.add(5.0);
+		
+		net.setExpectedOutputs(expectedOutputs);
+		net.generateOutput(inputs);	
+		net.backProp();
+	}
+	
+	@Test
+	public void backPropTestOutputUnitsLittleChange(){
+		FeedForwardANN net = new FeedForwardANN(3);
+		ArrayList<Double> inputs = new ArrayList<Double>();
+		inputs.add(1.0);
+		inputs.add(2.0);
+		inputs.add(-1.0);
+		inputs.add(3.0);
+		
+		ArrayList<Double> expectedOutputs = new ArrayList<Double>();
+		expectedOutputs.add(.9);
+		expectedOutputs.add(.9);
+		expectedOutputs.add(.9);
+		expectedOutputs.add(.9);
+		
+		net.setExpectedOutputs(expectedOutputs);
+		net.generateOutput(inputs);	
+		net.backProp();
+	}
 
 }

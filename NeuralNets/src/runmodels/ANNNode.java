@@ -89,7 +89,14 @@ public class ANNNode extends AbstractNode {
 	 * Calculates error using the node's loss function
 	 */
 	public double calcError(double expectedOutput) {
-		return loss.calcError(output, expectedOutput);
+		return loss.calcError(expectedOutput, output);
+	}
+	
+	/**
+	 * Calculates derivative of error using the node's loss function
+	 */
+	public double calcDerivError(double expectedOutput) {
+		return loss.calcDerivError(expectedOutput, output);
 	}
 
 	/**

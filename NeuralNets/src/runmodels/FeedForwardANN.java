@@ -10,6 +10,8 @@ public class FeedForwardANN extends AbstractModel {
 	//private AbstractFunction lossFunction;
 	private ArrayList<Double> inputs;
 	private double bias = 1;
+	// learning rate
+	private double eta = .2;
 	private ArrayList<Double> output;
 	private int layers;
 	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in
@@ -20,6 +22,7 @@ public class FeedForwardANN extends AbstractModel {
 	// TODO: this needs to go away once we figure out how to actually set this
 	// to something reasonable.
 	private int arbitraryLayerDepth = 4;
+	private ArrayList<Double> expectedOutputs = new ArrayList<Double>();
 
 	/**
 	 * Creates a new feed-forward neural network
@@ -144,8 +147,7 @@ public class FeedForwardANN extends AbstractModel {
 	private void giveInputs(){
 		int numInputNodes = nodes.get(0).size();
 		
-		// all except bias node
-		// TODO: fix bias node in createBiasNode
+		// all except bias node, which was taken care of by createBiasNode()
 		for (int i = 0; i < numInputNodes-1; i++){
 			nodes.get(0).get(i).addInput(inputs.get(i));
 			nodes.get(0).get(i).calcOutput();
@@ -220,6 +222,26 @@ public class FeedForwardANN extends AbstractModel {
 				// w += eta * -1 * loss.calcDerivError(n.output, expectedOutput(w)) 
 				// * output(w) * (1-output(w)) * n.input(associated with w)
 		
+		for (int n = 0; n < output.size(); n++){
+			int numWeights = nodes.get(layers-1).get(n).getWeights().size();
+			for (int weightIndex = 0; weightIndex < numWeights; weightIndex++){
+				// gets the value of the "weightIndex"th weight of node n
+				double w = nodes.get(layers-1).get(n).getWeights().get(weightIndex);
+
+				// TODO: actual calculation
+				ANNNode thisNode = nodes.get(layers-1).get(n);
+				double expectedNOutput = expectedOutputs.get(n);
+				double delta_w = eta * (-1 * thisNode.calcDerivError(expectedNOutput)) * thisNode.getOutput() * (1 - thisNode.getOutput()) * thisNode.getInputs().get(weightIndex);
+				w += delta_w;
+				System.out.println("Delta: " + "[" + n + ": " + weightIndex + "]" + delta_w);
+				
+				// sets this weight's value to w
+				nodes.get(layers-1).get(n).getWeights().set(weightIndex, w);
+			}
+			System.out.println();
+		}
+	
+		
 		// TODO: case 2 - hidden units
 		// foreach(layer L working backward from last hidden layer)
 			// foreach(node N in layer L)
@@ -247,6 +269,11 @@ public class FeedForwardANN extends AbstractModel {
 
 	public ArrayList<ArrayList<ANNNode>> getNodes() {
 		return nodes;
+	}
+	
+	public void setExpectedOutputs(ArrayList<Double> expectedOutputs){
+		// TODO: size check
+		this.expectedOutputs = expectedOutputs;
 	}
 
 }
