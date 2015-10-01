@@ -206,6 +206,7 @@ public class FeedForwardANN extends AbstractModel {
 			output.add(n.calcOutput());
 		}
 		
+		// TODO: testing, remove
 		System.out.println("Outputs:");
 		for (int i = 0; i < output.size(); i++){
 			System.out.println(output.get(i));
@@ -215,25 +216,29 @@ public class FeedForwardANN extends AbstractModel {
 		return output;
 	}
 
+	/**
+	 * Carries out a single backward propagation - will need to be called repeatedly, alternating with generateOutput
+	 */
 	public void backProp() {
-		// TODO: case 1 - output layer
-		// foreach (node N in output layer)
-			// foreach (weight w in node N)
-				// w += eta * -1 * loss.calcDerivError(n.output, expectedOutput(w)) 
-				// * output(w) * (1-output(w)) * n.input(associated with w)
-		
+		// case 1 - output layer
+
+		// foreach node N in output layer
 		for (int n = 0; n < output.size(); n++){
 			int numWeights = nodes.get(layers-1).get(n).getWeights().size();
+			// foreach weight on node N
 			for (int weightIndex = 0; weightIndex < numWeights; weightIndex++){
 				// gets the value of the "weightIndex"th weight of node n
 				double w = nodes.get(layers-1).get(n).getWeights().get(weightIndex);
 
-				// TODO: actual calculation
+				// actual calculation
 				ANNNode thisNode = nodes.get(layers-1).get(n);
 				double expectedNOutput = expectedOutputs.get(n);
+				thisNode.calcError(expectedNOutput);
 				double delta_w = eta * (-1 * thisNode.calcDerivError(expectedNOutput)) * thisNode.getOutput() * (1 - thisNode.getOutput()) * thisNode.getInputs().get(weightIndex);
 				w += delta_w;
-				System.out.println("Delta: " + "[" + n + ": " + weightIndex + "]" + delta_w);
+				
+				// TODO: testing, remove
+				System.out.println("Delta: " + "[Node: WI | " + n + ": " + weightIndex + "]" + delta_w);
 				
 				// sets this weight's value to w
 				nodes.get(layers-1).get(n).getWeights().set(weightIndex, w);
@@ -248,6 +253,71 @@ public class FeedForwardANN extends AbstractModel {
 				// foreach (weight w in node N)
 					// w += eta * (n.output * (1-n.output) * sumOfDownstream(delta(downstream) * weight(downstream)) * w
 		
+		// foreach layer L, working backward from last hidden layer
+		for (int layer = (layers-2); layer >= 0; layer --){
+			// TODO: testing, remove
+			System.out.println("Layer: " + layer);
+			// foreach node in this layer
+			for (int n = 0; n < (nodes.get(layer).size()); n++){
+				int numWeights = nodes.get(layer).get(n).getWeights().size();
+				// foreach weight on this node
+				for (int weightIndex = 0; weightIndex < numWeights; weightIndex++){
+					double w = nodes.get(layer).get(n).getWeights().get(weightIndex);
+					double delta_w = eta * calcLittleDelta(nodes.get(layer).get(n), weightIndex) * w;
+					
+					w += eta * delta_w;
+					System.out.println(("Delta: " + "[Node: WI | " + n + ": " + weightIndex + "]" + delta_w));
+				}				
+			}
+			System.out.println();
+		}
+		
+	}
+	
+	/** 
+	 * Calculates delta_j for for a node. Recursive.
+	 */
+	public double calcLittleDelta(ANNNode n, int weightIndex){
+		// source: https://www4.rgu.ac.uk/files/chapter3%20-%20bp.pdf
+		// ErrorA = error for neuron A
+		// OutputA = output of node A
+		// Wab = Weight from A in B
+		//ErrorA = Output A (1 - Output A)(ErrorB WAB + ErrorC WAC) 
+		
+		// no sum term if n is an output node
+		if (n.isOutputNode()){
+			// TODO: NEVER HITTING THIS
+			System.out.println("########################## OUTPUT NODE ##########################");
+			return n.getOutput() * (1 - n.getOutput());
+			
+		} else {
+			return (n.getOutput() * (1 - n.getOutput()) * sumDownstream(n, weightIndex));
+			// TODO: here, j is our index of the parent node (?)
+			// basically, we want to get the same "x"th input 
+		}
+	}
+	
+	/**
+	 * Calculates sum of delta_j * w_jk for nodes downstream of n
+	 */
+	public double sumDownstream(ANNNode n, int j){
+
+		double sum = 0;
+		for (ANNNode a : n.getDescendants()){
+			sum += calcLittleDelta(a, j) * a.getWeights().get(j);
+			
+			// TODO: testing, remove
+			if (sum != 0){
+				System.out.println("WE HAVE A NON ZERO SUM HERE");
+			}
+			if (a.getWeights().get(j) == 0){
+				System.out.println(" WE HAVE A ZERO WEIGHT");
+			}
+			if (calcLittleDelta(a, j) == 0){
+				//System.out.println("WE HAVE A ZERO LITTLE DELTA");
+			}
+		}
+		return sum;
 	}
 
 	/** To be used for testing */
@@ -274,6 +344,15 @@ public class FeedForwardANN extends AbstractModel {
 	public void setExpectedOutputs(ArrayList<Double> expectedOutputs){
 		// TODO: size check
 		this.expectedOutputs = expectedOutputs;
+	}
+	
+	/**
+	 * Allows user/caller to set eta, potentially useful for parameter tuning
+	 */
+	public void setEta(double newEta){
+		if (newEta < 1 && newEta > 0){
+			eta = newEta;
+		}
 	}
 
 }

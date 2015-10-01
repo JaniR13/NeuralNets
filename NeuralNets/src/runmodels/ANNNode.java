@@ -13,6 +13,7 @@ public class ANNNode extends AbstractNode {
 	// TODO: do the weights need to be < 1?
 	private ArrayList<Double> weights;
 	private double output = 0;
+	private double error = 0;
 
 	// these two only have meaning if it's part of a network
 	private int layer = 0;
@@ -89,7 +90,9 @@ public class ANNNode extends AbstractNode {
 	 * Calculates error using the node's loss function
 	 */
 	public double calcError(double expectedOutput) {
-		return loss.calcError(expectedOutput, output);
+		double error = loss.calcError(expectedOutput, output);
+		this.error = error;
+		return error;
 	}
 	
 	/**
@@ -225,6 +228,14 @@ public class ANNNode extends AbstractNode {
 	/** This should be used ONLY for input nodes */
 	public void setOutput(double o) {
 		output = o;
+	}
+
+	public double getError() {
+		return error;
+	}
+
+	public void setError(double error) {
+		this.error = error;
 	}
 
 }
