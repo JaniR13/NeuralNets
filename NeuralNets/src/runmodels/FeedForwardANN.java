@@ -176,8 +176,9 @@ public class FeedForwardANN extends AbstractModel {
 	 * @return ArrayList of all outputs
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
+		// sets inputs
 		this.inputs = inputs;
-		// puts nodes into first layer
+		// puts nodes into first layer of network (others were already created by createNetworkNodes)
 		populateInputLayer();
 		// links nodes in network
 		createNetworkLinks();
@@ -197,11 +198,11 @@ public class FeedForwardANN extends AbstractModel {
 					//System.out.println("Node " + n.getLayer() + n.getDepth() + " passed an input to node " + d.getLayer() + d.getDepth());
 				}
 			}
-			System.out.println(" ");
+			//System.out.println(" ");
 		}
 
 		// 4. once you hit the output layer, save the output of that layer into
-		// a list/array and print
+		// a list/array 
 		for (ANNNode n : nodes.get(layers-1)){
 			output.add(n.calcOutput());
 		}
@@ -230,15 +231,15 @@ public class FeedForwardANN extends AbstractModel {
 				// gets the value of the "weightIndex"th weight of node n
 				double w = nodes.get(layers-1).get(n).getWeights().get(weightIndex);
 
-				// actual calculation
 				ANNNode thisNode = nodes.get(layers-1).get(n);
 				double expectedNOutput = expectedOutputs.get(n);
 				thisNode.calcError(expectedNOutput);
+				// calculates change in weight
 				double delta_w = eta * (-1 * thisNode.calcDerivError(expectedNOutput)) * thisNode.getOutput() * (1 - thisNode.getOutput()) * thisNode.getInputs().get(weightIndex);
 				w += delta_w;
 				
 				// TODO: testing, remove
-				System.out.println("Delta: " + "[Node: WI | " + n + ": " + weightIndex + "]" + delta_w);
+				System.out.println("Delta: " + "[Node: WI | " + n + ": " + weightIndex + "]" + delta_w + "   Error " + thisNode.getError());
 				
 				// sets this weight's value to w
 				nodes.get(layers-1).get(n).getWeights().set(weightIndex, w);
@@ -262,10 +263,13 @@ public class FeedForwardANN extends AbstractModel {
 				int numWeights = nodes.get(layer).get(n).getWeights().size();
 				// foreach weight on this node
 				for (int weightIndex = 0; weightIndex < numWeights; weightIndex++){
+					// gets the value of the "weightIndex"th weight of node n
 					double w = nodes.get(layer).get(n).getWeights().get(weightIndex);
+					
+					// calculates change in w
 					double delta_w = eta * calcLittleDelta(nodes.get(layer).get(n), weightIndex) * w;
 					
-					w += eta * delta_w;
+					w += delta_w;
 					System.out.println(("Delta: " + "[Node: WI | " + n + ": " + weightIndex + "]" + delta_w));
 				}				
 			}
