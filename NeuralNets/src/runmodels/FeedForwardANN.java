@@ -266,11 +266,14 @@ public class FeedForwardANN extends AbstractModel {
 			// foreach node in this layer
 			for (int n = 0; n < (nodes.get(layer).size()); n++) {
 				ANNNode thisNode = nodes.get(layer).get(n);
-
+				
+				// calculates error on this node
 				double nodeError = thisNode.getOutput()
 						* (1 - thisNode.getOutput());
 				for (ANNNode desc : thisNode.getDescendants()) {
-					nodeError += desc.getError() * desc.getWeights().get(n);
+					// factors in descendants' errors
+					// TODO: need to include the gradient/derivative!
+					nodeError += (desc.getError() * desc.getWeights().get(n));
 				}
 
 				thisNode.setError(nodeError);
