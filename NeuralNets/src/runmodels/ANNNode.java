@@ -71,6 +71,14 @@ public class ANNNode extends AbstractNode {
 		if (isFirstRun) {
 			initializeWeights(this.inputs.size());
 		}
+		
+		//TODO: testing, remove!
+		System.out.print("Layer: " + this.layer + " <");
+		for(Double d: this.inputs){
+			System.out.print(d + "  ");
+		}
+		System.out.print(">");
+		System.out.println();
 
 		output = 0;
 		// calculates \sum_i w_i x_i

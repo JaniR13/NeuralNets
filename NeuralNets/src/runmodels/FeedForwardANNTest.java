@@ -104,9 +104,9 @@ public class FeedForwardANNTest {
 		
 		ArrayList<Double> expectedOutputs = new ArrayList<Double>();
 		expectedOutputs.add(5.0);
-		expectedOutputs.add(5.0);
-		expectedOutputs.add(5.0);
-		expectedOutputs.add(5.0);
+		expectedOutputs.add(4.0);
+		expectedOutputs.add(3.0);
+		expectedOutputs.add(2.0);
 		
 		net.setExpectedOutputs(expectedOutputs);
 		net.generateOutput(inputs);	

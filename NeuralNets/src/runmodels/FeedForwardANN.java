@@ -11,7 +11,7 @@ public class FeedForwardANN extends AbstractModel {
 	private ArrayList<Double> inputs;
 	private double bias = 1;
 	// learning rate
-	private double eta = .2;
+	private double eta = .1;
 	private ArrayList<Double> output;
 	private int layers;
 	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in
@@ -79,6 +79,7 @@ public class FeedForwardANN extends AbstractModel {
 
 	/** Creates input-layer nodes with a number of given inputs - TESTING ONLY */
 	protected void populateInputLayer(int numInputs) {
+		createBiasNode();
 		for (int i = 0; i < numInputs; i++) {
 			ANNNode nextNode = new ANNNode(new LogisticFunction());
 			nextNode.setLayer(0);
@@ -86,7 +87,6 @@ public class FeedForwardANN extends AbstractModel {
 			nextNode.setInputNode(true);
 			nodes.get(0).add(nextNode);
 		}
-		createBiasNode();
 	}
 
 	/**
@@ -95,9 +95,9 @@ public class FeedForwardANN extends AbstractModel {
 	private void createBiasNode() {
 		ANNNode biasNode = new ANNNode(new LogisticFunction());
 
-		// lives at largest index of first layer
+		// lives at first index of first layer
 		biasNode.setLayer(0);
-		biasNode.setDepth(nodes.get(0).size());
+		biasNode.setDepth(0);
 		biasNode.setInputNode(true);
 
 		// adds every non-input node in the network as a descendant
@@ -176,8 +176,12 @@ public class FeedForwardANN extends AbstractModel {
 	 * @return ArrayList of all outputs
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
+		
 		// sets inputs
 		this.inputs = inputs;
+		
+		// TODO: next several lines should be done ONLY the first time this is run!!! 
+		
 		// puts nodes into first layer of network (others were already created
 		// by createNetworkNodes)
 		populateInputLayer();
@@ -246,8 +250,8 @@ public class FeedForwardANN extends AbstractModel {
 				w += delta_w;
 
 				// TODO: testing, remove
-				System.out.println("Delta: " + "[Node: WI | " + n + ": "
-						+ weightIndex + "] " + delta_w + "   Error "
+				System.out.println("[Node: WI | " + n + ": "
+						+ weightIndex + "] delta: " + delta_w + "   error: "
 						+ thisNode.getError());
 
 				// sets this weight's value to w
@@ -287,8 +291,8 @@ public class FeedForwardANN extends AbstractModel {
 					w += delta_w;
 					
 					// TODO: testing, remove
-					System.out.println("Delta: " + "[Node: WI | " + n + ": "
-							+ weightIndex + "] " + delta_w + "   Error "
+					System.out.println("[Node: WI | " + n + ": "
+							+ weightIndex + "] delta: " + delta_w + "   error: "
 							+ thisNode.getError());
 
 					// sets this weight's value to w
