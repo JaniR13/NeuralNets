@@ -97,7 +97,7 @@ public class FeedForwardANNTest {
 	public void backPropTestOutputUnitsBigChange(){
 		FeedForwardANN net = new FeedForwardANN(4);
 		ArrayList<Double> inputs = new ArrayList<Double>();
-		inputs.add(1.0);
+		inputs.add(-2.5);
 		inputs.add(2.0);
 		inputs.add(-1.0);
 		inputs.add(3.0);
@@ -107,6 +107,9 @@ public class FeedForwardANNTest {
 		expectedOutputs.add(4.0);
 		expectedOutputs.add(3.0);
 		expectedOutputs.add(2.0);
+		
+		//ArrayList<ArrayList<ANNNode>> networkNodes = net.getNodes();
+		//assertEquals(true, networkNodes.get(0).get(0).isBiasNode());
 		
 		net.setExpectedOutputs(expectedOutputs);
 		net.generateOutput(inputs);	

@@ -67,14 +67,23 @@ public class FeedForwardANN extends AbstractModel {
 
 	/** Creates input-layer nodes once inputs are all given */
 	private void populateInputLayer() {
-		for (int i = 0; i < inputs.size(); i++) {
+		ANNNode biasNode = createBiasNode();
+		
+		for (int i = 1; i < inputs.size(); i++) {
 			ANNNode nextNode = new ANNNode(new LogisticFunction());
 			nextNode.setLayer(0);
 			nextNode.setDepth(i);
 			nextNode.setInputNode(true);
 			nodes.get(0).add(nextNode);
 		}
-		createBiasNode();
+
+		// adds every non-input node in the network as a descendant of bias node
+		for (int l = 1; l < layers; l++) {
+			for (ANNNode n : nodes.get(l)) {
+				biasNode.addDescendant(n);
+			}
+		}
+
 	}
 
 	/** Creates input-layer nodes with a number of given inputs - TESTING ONLY */
@@ -92,7 +101,7 @@ public class FeedForwardANN extends AbstractModel {
 	/**
 	 * Creates bias node and adds it to network
 	 */
-	private void createBiasNode() {
+	private ANNNode createBiasNode() {
 		ANNNode biasNode = new ANNNode(new LogisticFunction());
 
 		// lives at first index of first layer
@@ -100,18 +109,14 @@ public class FeedForwardANN extends AbstractModel {
 		biasNode.setDepth(0);
 		biasNode.setInputNode(true);
 
-		// adds every non-input node in the network as a descendant
-		for (int l = 1; l < layers; l++) {
-			for (ANNNode n : nodes.get(l)) {
-				biasNode.addDescendant(n);
-			}
-		}
-
 		// sets its output
 		biasNode.setIsBiasNode(true);
 		biasNode.addInput(bias);
+
 		// adds itself to the network
 		nodes.get(0).add(biasNode);
+
+		return biasNode;
 
 	}
 
@@ -146,11 +151,20 @@ public class FeedForwardANN extends AbstractModel {
 	/** Gives inputs to the input layer */
 	private void giveInputs() {
 		int numInputNodes = nodes.get(0).size();
+		
 
 		// all except bias node, which was taken care of by createBiasNode()
-		for (int i = 0; i < numInputNodes - 1; i++) {
-			nodes.get(0).get(i).addInput(inputs.get(i));
-			nodes.get(0).get(i).calcOutput();
+		for (int i = 0; i < numInputNodes; i++) {
+			if (!nodes.get(0).get(i).isBiasNode()) {
+				nodes.get(0).get(i).addInput(inputs.get(i));
+				// TODO: testing, remove
+				System.out.println("Added input " + inputs.get(i) + " to input node " + i);
+				// TODO: removed this so we stopped double-calculating this input
+				//nodes.get(0).get(i).calcOutput();
+			} else {
+				// TODO: testing, remove
+				System.out.println("Bias node has input " + nodes.get(0).get(i).getInputs().get(0));
+			}
 		}
 	}
 
@@ -176,12 +190,13 @@ public class FeedForwardANN extends AbstractModel {
 	 * @return ArrayList of all outputs
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
-		
+
 		// sets inputs
 		this.inputs = inputs;
-		
-		// TODO: next several lines should be done ONLY the first time this is run!!! 
-		
+
+		// TODO: next several lines should be done ONLY the first time this is
+		// run!!!
+
 		// puts nodes into first layer of network (others were already created
 		// by createNetworkNodes)
 		populateInputLayer();
@@ -228,6 +243,11 @@ public class FeedForwardANN extends AbstractModel {
 	 * repeatedly, alternating with generateOutput
 	 */
 	public void backProp() {
+		// TODO: testing, remove
+		System.out.println("AT THE START OF BACKPROP WE HAVE " + nodes.get(0).size() + " input nodes");
+		
+		
+		
 		// case 1 - output layer
 
 		// foreach node N in output layer
@@ -250,8 +270,8 @@ public class FeedForwardANN extends AbstractModel {
 				w += delta_w;
 
 				// TODO: testing, remove
-				System.out.println("[Node: WI | " + n + ": "
-						+ weightIndex + "] delta: " + delta_w + "   error: "
+				System.out.println("[Node: WI | " + n + ": " + weightIndex
+						+ "] delta: " + delta_w + "   error: "
 						+ thisNode.getError());
 
 				// sets this weight's value to w
@@ -266,11 +286,11 @@ public class FeedForwardANN extends AbstractModel {
 		for (int layer = (layers - 2); layer >= 0; layer--) {
 			// TODO: testing, remove
 			System.out.println("Layer: " + layer);
-			
+
 			// foreach node in this layer
 			for (int n = 0; n < (nodes.get(layer).size()); n++) {
 				ANNNode thisNode = nodes.get(layer).get(n);
-				
+
 				// calculates error on this node
 				double nodeError = thisNode.getOutput()
 						* (1 - thisNode.getOutput());
@@ -289,16 +309,16 @@ public class FeedForwardANN extends AbstractModel {
 					double delta_w = eta * thisNode.getError()
 							* thisNode.getWeights().get(weightIndex);
 					w += delta_w;
-					
+
 					// TODO: testing, remove
-					System.out.println("[Node: WI | " + n + ": "
-							+ weightIndex + "] delta: " + delta_w + "   error: "
+					System.out.println("[Node: WI | " + n + ": " + weightIndex
+							+ "] delta: " + delta_w + "   error: "
 							+ thisNode.getError());
 
 					// sets this weight's value to w
 					nodes.get(layer).get(n).getWeights().set(weightIndex, w);
-					
-				}				
+
+				}
 			}
 			System.out.println();
 		}
