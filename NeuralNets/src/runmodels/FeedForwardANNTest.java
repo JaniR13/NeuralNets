@@ -58,6 +58,6 @@ public class FeedForwardANNTest {
 			net.generateOutput(inputs);	
 			net.backProp();
 		}
-	}
+	} 
 
 }

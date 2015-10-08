@@ -57,7 +57,7 @@ public class ANNNode extends AbstractNode {
 		weights = new ArrayList<Double>();
 
 		for (int i = 0; i < numInputs; i++) {
-			weights.add(Math.random());
+			weights.add(Math.random() * 10);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class ANNNode extends AbstractNode {
 		if (isFirstRun) {
 			initializeWeights(this.inputs.size());
 		}
-		/**
+/**
 		//TODO: testing, remove!
 		System.out.print("Layer: " + this.layer + " inputs <");
 		for(Double d: this.inputs){
@@ -81,11 +81,16 @@ public class ANNNode extends AbstractNode {
 		System.out.println(); */
 
 		output = 0;
-		// calculates \sum_i w_i x_i
-		for (int i = 0; i < inputs.size(); i++) {
-			output += (weights.get(i) * inputs.get(i));
+
+		if (isInputNode) {
+			output = inputs.get(0);
+		} else {
+			// calculates \sum_i w_i x_i
+			for (int i = 0; i < inputs.size(); i++) {
+				output += (weights.get(i) * inputs.get(i));
+			}
+			output = f.calcfx(output);
 		}
-		output = f.calcfx(output);
 
 		// it's no longer the first run - we don't want to keep randomly
 		// initializing weights!
@@ -102,7 +107,7 @@ public class ANNNode extends AbstractNode {
 		this.error = error;
 		return error;
 	}
-	
+
 	/**
 	 * Calculates derivative of error using the node's loss function
 	 */
@@ -162,6 +167,14 @@ public class ANNNode extends AbstractNode {
 		return s;
 	}
 
+	public void printWeights() {
+		System.out.print("Weights: <");
+		for (Double d : weights) {
+			System.out.print(d + "  ");
+		}
+		System.out.print(">");
+	}
+
 	public ArrayList<Double> getWeights() {
 		return weights;
 	}
@@ -169,8 +182,8 @@ public class ANNNode extends AbstractNode {
 	public double getOutput() {
 		return output;
 	}
-	
-	public ArrayList<Double> getInputs(){
+
+	public ArrayList<Double> getInputs() {
 		return inputs;
 	}
 
