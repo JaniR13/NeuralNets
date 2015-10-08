@@ -152,7 +152,6 @@ public class FeedForwardANN extends AbstractModel {
 	private void giveInputs() {
 		int numInputNodes = nodes.get(0).size();
 		
-
 		// all except bias node, which was taken care of by createBiasNode()
 		for (int i = 0; i < numInputNodes; i++) {
 			if (!nodes.get(0).get(i).isBiasNode()) {
@@ -229,6 +228,7 @@ public class FeedForwardANN extends AbstractModel {
 		}
 
 		// TODO: testing, remove
+		System.out.println();
 		System.out.println("Outputs:");
 		for (int i = 0; i < output.size(); i++) {
 			System.out.println(output.get(i));
@@ -243,10 +243,14 @@ public class FeedForwardANN extends AbstractModel {
 	 * repeatedly, alternating with generateOutput
 	 */
 	public void backProp() {
+		
 		// TODO: testing, remove
-		System.out.println("AT THE START OF BACKPROP WE HAVE " + nodes.get(0).size() + " input nodes");
-		
-		
+		ArrayList<ArrayList<Double>> initWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 0; i < layers; i++){
+			for (ANNNode n : nodes.get(i)){
+				initWeights.add(n.getWeights());
+			}
+		}
 		
 		// case 1 - output layer
 
@@ -317,11 +321,39 @@ public class FeedForwardANN extends AbstractModel {
 
 					// sets this weight's value to w
 					nodes.get(layer).get(n).getWeights().set(weightIndex, w);
-
 				}
 			}
 			System.out.println();
 		}
+		
+		
+		// TODO: testing, remove
+		// TODO: testing, remove
+		ArrayList<ArrayList<Double>>endWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 0; i < layers; i++){
+			for (ANNNode n : nodes.get(i)){
+				endWeights.add(n.getWeights());
+			}
+		}
+		
+		for(int i = 0; i < initWeights.size(); i++){
+			System.out.println();
+			System.out.print("<");
+			for (int j = 0; j < initWeights.get(i).size(); j++){
+				System.out.print(initWeights.get(i).get(j) + "  ");
+			}
+			System.out.print(">");
+		}
+		System.out.println();
+		for(int i = 0; i < endWeights.size(); i++){
+			System.out.println();
+			System.out.print("<");
+			for (int j = 0; j < endWeights.get(i).size(); j++){
+				System.out.print(endWeights.get(i).get(j) + "  ");
+			}
+			System.out.print(">");
+		}
+		System.out.println();		
 	}
 
 	/** To be used for testing */

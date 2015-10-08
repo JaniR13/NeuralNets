@@ -73,7 +73,7 @@ public class ANNNode extends AbstractNode {
 		}
 		
 		//TODO: testing, remove!
-		System.out.print("Layer: " + this.layer + " <");
+		System.out.print("Layer: " + this.layer + " inputs <");
 		for(Double d: this.inputs){
 			System.out.print(d + "  ");
 		}
