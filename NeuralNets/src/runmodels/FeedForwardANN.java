@@ -11,7 +11,7 @@ public class FeedForwardANN extends AbstractModel {
 	private ArrayList<Double> inputs;
 	private double bias = 1;
 	// learning rate
-	private double eta = .1;
+	private double eta = .4;
 	private ArrayList<Double> output;
 	private int layers;
 	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in
@@ -23,6 +23,7 @@ public class FeedForwardANN extends AbstractModel {
 	// to something reasonable.
 	private int arbitraryLayerDepth = 4;
 	private ArrayList<Double> expectedOutputs = new ArrayList<Double>();
+	private boolean firstRun = true;
 
 	/**
 	 * Creates a new feed-forward neural network
@@ -68,7 +69,7 @@ public class FeedForwardANN extends AbstractModel {
 	/** Creates input-layer nodes once inputs are all given */
 	private void populateInputLayer() {
 		ANNNode biasNode = createBiasNode();
-		
+
 		for (int i = 1; i < inputs.size(); i++) {
 			ANNNode nextNode = new ANNNode(new LogisticFunction());
 			nextNode.setLayer(0);
@@ -151,18 +152,21 @@ public class FeedForwardANN extends AbstractModel {
 	/** Gives inputs to the input layer */
 	private void giveInputs() {
 		int numInputNodes = nodes.get(0).size();
-		
+
 		// all except bias node, which was taken care of by createBiasNode()
 		for (int i = 0; i < numInputNodes; i++) {
 			if (!nodes.get(0).get(i).isBiasNode()) {
 				nodes.get(0).get(i).addInput(inputs.get(i));
 				// TODO: testing, remove
-				System.out.println("Added input " + inputs.get(i) + " to input node " + i);
-				// TODO: removed this so we stopped double-calculating this input
-				//nodes.get(0).get(i).calcOutput();
+				// System.out.println("Added input " + inputs.get(i) +
+				// " to input node " + i);
+				// TODO: removed this so we stopped double-calculating this
+				// input
+				// nodes.get(0).get(i).calcOutput();
 			} else {
 				// TODO: testing, remove
-				System.out.println("Bias node has input " + nodes.get(0).get(i).getInputs().get(0));
+				// System.out.println("Bias node has input " +
+				// nodes.get(0).get(i).getInputs().get(0));
 			}
 		}
 	}
@@ -190,19 +194,31 @@ public class FeedForwardANN extends AbstractModel {
 	 */
 	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
 
-		// sets inputs
-		this.inputs = inputs;
-
 		// TODO: next several lines should be done ONLY the first time this is
 		// run!!!
 
-		// puts nodes into first layer of network (others were already created
-		// by createNetworkNodes)
-		populateInputLayer();
-		// links nodes in network
-		createNetworkLinks();
-		// gives inputs to input nodes
-		giveInputs();
+		if (firstRun == true) {
+			// sets inputs
+			this.inputs = inputs;
+			// puts nodes into first layer of network (others were already
+			// created
+			// by createNetworkNodes)
+			populateInputLayer();
+			// links nodes in network
+			createNetworkLinks();
+			// gives inputs to input nodes
+			giveInputs();
+		} else {
+			// clear inputs to all non-input nodes
+			for (int i = 1; i < layers; i++){
+				for (int j = 0; j < nodes.get(i).size(); j++){
+					nodes.get(i).get(j).clearInputs();
+				}
+			}
+			// clear outputs 
+			output.clear();			
+		}
+		firstRun = false;
 
 		// runs through one layer at a time, EXCEPT output layer
 		for (int i = 0; i < layers - 1; i++) {
@@ -243,15 +259,15 @@ public class FeedForwardANN extends AbstractModel {
 	 * repeatedly, alternating with generateOutput
 	 */
 	public void backProp() {
-		
+
 		// TODO: testing, remove
 		ArrayList<ArrayList<Double>> initWeights = new ArrayList<ArrayList<Double>>();
-		for (int i = 0; i < layers; i++){
-			for (ANNNode n : nodes.get(i)){
+		for (int i = 0; i < layers; i++) {
+			for (ANNNode n : nodes.get(i)) {
 				initWeights.add(n.getWeights());
 			}
 		}
-		
+
 		// case 1 - output layer
 
 		// foreach node N in output layer
@@ -325,35 +341,34 @@ public class FeedForwardANN extends AbstractModel {
 			}
 			System.out.println();
 		}
-		
-		
+
 		// TODO: testing, remove
 		// TODO: testing, remove
-		ArrayList<ArrayList<Double>>endWeights = new ArrayList<ArrayList<Double>>();
-		for (int i = 0; i < layers; i++){
-			for (ANNNode n : nodes.get(i)){
+		ArrayList<ArrayList<Double>> endWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 0; i < layers; i++) {
+			for (ANNNode n : nodes.get(i)) {
 				endWeights.add(n.getWeights());
 			}
 		}
-		
-		for(int i = 0; i < initWeights.size(); i++){
+
+		for (int i = 0; i < initWeights.size(); i++) {
 			System.out.println();
 			System.out.print("<");
-			for (int j = 0; j < initWeights.get(i).size(); j++){
+			for (int j = 0; j < initWeights.get(i).size(); j++) {
 				System.out.print(initWeights.get(i).get(j) + "  ");
 			}
 			System.out.print(">");
 		}
 		System.out.println();
-		for(int i = 0; i < endWeights.size(); i++){
+		for (int i = 0; i < endWeights.size(); i++) {
 			System.out.println();
 			System.out.print("<");
-			for (int j = 0; j < endWeights.get(i).size(); j++){
+			for (int j = 0; j < endWeights.get(i).size(); j++) {
 				System.out.print(endWeights.get(i).get(j) + "  ");
 			}
 			System.out.print(">");
 		}
-		System.out.println();		
+		System.out.println();
 	}
 
 	/** To be used for testing */

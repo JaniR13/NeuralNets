@@ -111,6 +111,13 @@ public class FeedForwardANNTest {
 		net.setExpectedOutputs(expectedOutputs);
 		net.generateOutput(inputs);	
 		net.backProp();
+		net.generateOutput(inputs);	
+		net.backProp();
+		net.generateOutput(inputs);	
+		net.backProp();
+		net.generateOutput(inputs);	
+		net.backProp();
+		net.generateOutput(inputs);	
 	}
 	
 	/**
