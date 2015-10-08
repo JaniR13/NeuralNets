@@ -261,12 +261,20 @@ public class FeedForwardANN extends AbstractModel {
 	public void backProp() {
 
 		// TODO: testing, remove
-		ArrayList<ArrayList<Double>> initWeights = new ArrayList<ArrayList<Double>>();
+		/**ArrayList<ArrayList<Double>> initWeights = new ArrayList<ArrayList<Double>>();
 		for (int i = 0; i < layers; i++) {
 			for (ANNNode n : nodes.get(i)) {
 				initWeights.add(n.getWeights());
 			}
+		}*/
+		
+		// remove all previous errors
+		for (int i = 0; i < layers; i++) {
+			for (ANNNode n : nodes.get(i)) {
+				n.setError(0);
+			}
 		}
+		
 
 		// case 1 - output layer
 
@@ -292,7 +300,7 @@ public class FeedForwardANN extends AbstractModel {
 				// TODO: testing, remove
 				System.out.println("[Node: WI | " + n + ": " + weightIndex
 						+ "] delta: " + delta_w + "   error: "
-						+ thisNode.getError());
+						+ thisNode.getError()); 
 
 				// sets this weight's value to w
 				nodes.get(layers - 1).get(n).getWeights().set(weightIndex, w);
@@ -333,7 +341,7 @@ public class FeedForwardANN extends AbstractModel {
 					// TODO: testing, remove
 					System.out.println("[Node: WI | " + n + ": " + weightIndex
 							+ "] delta: " + delta_w + "   error: "
-							+ thisNode.getError());
+							+ thisNode.getError()); 
 
 					// sets this weight's value to w
 					nodes.get(layer).get(n).getWeights().set(weightIndex, w);
@@ -344,6 +352,7 @@ public class FeedForwardANN extends AbstractModel {
 
 		// TODO: testing, remove
 		// TODO: testing, remove
+		/**
 		ArrayList<ArrayList<Double>> endWeights = new ArrayList<ArrayList<Double>>();
 		for (int i = 0; i < layers; i++) {
 			for (ANNNode n : nodes.get(i)) {
@@ -368,7 +377,7 @@ public class FeedForwardANN extends AbstractModel {
 			}
 			System.out.print(">");
 		}
-		System.out.println();
+		System.out.println();*/
 	}
 
 	/** To be used for testing */
