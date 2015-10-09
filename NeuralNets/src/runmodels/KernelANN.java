@@ -25,9 +25,9 @@ public class KernelANN extends AbstractModel {
     }
 
     public void buildNetwork(int numInputs, int numOutputs, int numFunctions) {
-        for(int i = 0; i < numInputs; i++){
-            inputs.set(i, 0.0);
-        }
+       // for(int i = 0; i < numInputs; i++){ //TODO need to figure out if inputs means features or training examples...
+           // inputs.set(i, 0.0);
+        //}
         for(int j = 0; j < numOutputs; j++){
             outputs.set(j, 0.0);
         }
@@ -41,16 +41,16 @@ public class KernelANN extends AbstractModel {
                 functions.get(k).inweights.set(j, 0.0);//initialize to Random weights?
             }
             functions.get(k).var = 0.0; //TODO set variance
-            //TODO mean?
+            //TODO how to set mean?
         }
     }
 
     public void kMeansClustering(int k) {
-
+        //TODO figure out how to do k-means...
     }
 
     public void updateWeights() {
-
+        //TODO do weight updates
     }
 
     public void generateOutputs() {
