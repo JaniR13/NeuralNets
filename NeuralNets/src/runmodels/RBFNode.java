@@ -13,21 +13,18 @@ import java.util.ArrayList;
  */
 public class RBFNode {
     ArrayList<Double> outweights; //weights to each output node from this RBF
-    ArrayList<Double> inweights; //weights from each input to this RBF
-    double var;//variance (do we need variance matrix or will single parameter do?)
+    //ArrayList<Double> inweights; //Most RBF's don't have weights from input nodes to hidden nodes
+    double var;//need variance matrix. TODO how do I implement that?
     ArrayList<Double> means; //center of the cluster as vector
     double activationOut;//Activation output
+    Distance dist = new Distance();
     public RBFNode(){
         
     }
     public double calculateActivation(ArrayList<Double> x){//TODO make decision about variance matrix
-        double error = 0;
         double variance = 1/(2*Math.pow(var, 2));
-        for(int i = 0; i < x.size();i++){
-            error += Math.pow(means.get(i)-x.get(i), 2);
-        }
-        error = Math.sqrt(error);
-        double phi = Math.exp(var*error);
-        return phi;
+        double error = Math.pow(dist.calculateDistance(x, means),2);
+        return Math.exp(variance*error);
     }
+    
 }
