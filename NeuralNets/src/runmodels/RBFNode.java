@@ -20,7 +20,14 @@ public class RBFNode {
     public RBFNode(){
         
     }
-    public void calculateActivation(ArrayList x){
-        
+    public double calculateActivation(ArrayList<Double> x){//TODO make decision about variance matrix
+        double error = 0;
+        double variance = 1/(2*Math.pow(var, 2));
+        for(int i = 0; i < x.size();i++){
+            error += Math.pow(means.get(i)-x.get(i), 2);
+        }
+        error = Math.sqrt(error);
+        double phi = Math.exp(var*error);
+        return phi;
     }
 }
