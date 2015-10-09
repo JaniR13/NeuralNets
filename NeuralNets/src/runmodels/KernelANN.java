@@ -44,11 +44,15 @@ public class KernelANN extends AbstractModel {
         }
     }
 
-    public void kMeansClustering(int k, String fname){//input all examples and k
-        //read data from file 
-        //figure out dimensionality of input and output
-        //call buildNetwork(input dimensions, output dimensions, k)
-        
+    public void kMeansClustering(int k, String fname, int outDim){//input all examples and k
+        KMeans kmeans = new KMeans();
+        ArrayList<ArrayList> meanslist = kmeans.createClusters(k, fname);
+        int inDim = meanslist.get(0).size();
+        buildNetwork(inDim, outDim, k);
+        for(int i = 0; i < functions.size(); i++){
+            functions.get(i).means.addAll(meanslist.get(i));
+        }
+        //variance?
             
     }
 
