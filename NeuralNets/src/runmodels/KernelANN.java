@@ -25,7 +25,24 @@ public class KernelANN extends AbstractModel {
     }
 
     public void buildNetwork(int numInputs, int numOutputs, int numFunctions) {
-
+        for(int i = 0; i < numInputs; i++){
+            inputs.set(i, 0.0);
+        }
+        for(int j = 0; j < numOutputs; j++){
+            outputs.set(j, 0.0);
+        }
+        for(int k = 0; k < numFunctions; k++){
+            RBFNode node = new RBFNode();
+            functions.set(k, node);
+            for(int i = 0; i < inputs.size(); i++){
+                functions.get(k).inweights.set(i, 0.0);//initialize to Random weights?
+            }
+            for(int j = 0; j < outputs.size(); j++){
+                functions.get(k).inweights.set(j, 0.0);//initialize to Random weights?
+            }
+            functions.get(k).var = 0.0; //TODO set variance
+            //TODO mean?
+        }
     }
 
     public void kMeansClustering(int k) {
