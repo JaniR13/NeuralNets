@@ -26,7 +26,8 @@ ANNNode.java
 	Node for a FeedForwardANN. I should rename this to reflect that - my naming is bad and I feel bad.
 	
 KernelANN.java
-	Will implement a radial basis function network.
+	Implements a radial basis function network, with k-means clustering, gradient descent and 
+        Gaussian function for basis nodes. Simple weighted sum for output. 
 	
 LogisticFunction.java
 	A Logistic activation function for a neural network.
@@ -36,6 +37,9 @@ MeanSquaredError.java
  	
 NeuralNets.java
  	Will eventually become parent classes for KernelANN and FeedForwardANN, probably.
+
+RBFNode.java
+        Stores the weights, function, variance, mean for each Basis Function. 
  	
 RunModels.java
 	??????????????????????
