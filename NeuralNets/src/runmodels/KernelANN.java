@@ -29,36 +29,43 @@ public class KernelANN extends AbstractModel {
     public void buildNetwork(int numInputs, int numOutputs, int numFunctions) {
         Random rand = new Random();
         for(int i = 0; i < numInputs; i++){ //TODO need to figure out if inputs means features or training examples...
-            inputs.set(i, 0.0);
+            inputs.add(0.0);
         }
         for(int j = 0; j < numOutputs; j++){
-            outputs.set(j, 0.0);
+            outputs.add(0.0);
         }
         for(int k = 0; k < numFunctions; k++){
             RBFNode node = new RBFNode();
             functions.set(k, node);
             for(int i = 0; i < outputs.size(); i++){
-                functions.get(k).outweights.set(i, rand.nextDouble());//initialize to Random weights?
+                functions.get(k).outweights.add(rand.nextDouble());//initialize to Random weights
             }
-//            for(int j = 0; j < outputs.size(); j++){
-//                functions.get(k).inweights.set(j, rand.nextDouble());//initialize to Random weights?
-//            }
             //TODO set variance
-            //TODO set means via k-means
         }
     }
 
-    public void kMeansClustering(int k) {
-        //TODO figure out how to do k-means...
+    public void kMeansClustering(int k, String fname){//input all examples and k
+        //read data from file 
+        //figure out dimensionality of input and output
+        //call buildNetwork(input dimensions, output dimensions, k)
+        
+            
     }
 
-    public double updateIndWeight(double inweight, double input, ArrayList<Double> target, ArrayList<Double> observed, ArrayList<Double> x) {
+    public double updateIndWeight(double inweight, double input, ArrayList<Double> target, ArrayList<Double> observed) {
         double outweight = inweight;
         outweight += dist.calculateDistance(target, observed)*eta*input;//multiply this by input
         return outweight;
     }
-    public void updateAllWeights(){
-        
+    public void updateAllWeights(ArrayList<Double> target){
+        double x = 0;
+        for(int i = 0; i < functions.size(); i++){//for each hidden node
+            for(int j = 0; j <outputs.size(); j++){
+                x = updateIndWeight(functions.get(i).outweights.get(j), 
+                        functions.get(i).activationOut, target, outputs);
+                functions.get(i).outweights.set(j, x);
+            }
+        }
     }
     public void generateOutputs() {
         for (int i = 0; i < outputs.size(); i++) {
