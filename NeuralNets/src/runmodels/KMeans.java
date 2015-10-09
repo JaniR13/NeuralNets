@@ -17,7 +17,7 @@ public class KMeans {
     }
     public ArrayList<ArrayList> createClusters(int k, String fname){
         //read data from file 
-        //figure out dimensionality of input and output
+        //figure out dimensionality of input
     
         //Generate k examples of dimensionality same as input
         //for each example
