@@ -12,10 +12,11 @@ import java.util.ArrayList;
  * @author Janette
  */
 public class RBFNode {
-    double outweight;
-    double inweight;
-    double var;
-    double mean;
+    ArrayList<Double> outweights; //weights to each output node from this RBF
+    ArrayList<Double> inweights; //weights from each input to this RBF
+    double var;//variance (do we need variance matrix or will single parameter do?)
+    ArrayList<Double> mean; //center of the cluster as vector
+    double activationOut;//Activation output
     public RBFNode(){
         
     }
