@@ -13,21 +13,19 @@ import java.util.ArrayList;
  */
 public class RBFNode {
     ArrayList<Double> outweights = new ArrayList(); //weights to each output node from this RBF
-    //ArrayList<Double> inweights; //Most RBF's don't have weights from input nodes to hidden nodes
+    ArrayList<Double> oldweights = new ArrayList();//array to keep track of old weights so can revert if error is bigger
     ArrayList<Double> means = new ArrayList(); //center of the cluster as vector
-    double activationOut;//Activation output
+    double activationOut;//output calculate Activation function
+    double input;
     Distance dist = new Distance();
     public RBFNode(){
         
     }
-    public double calculateActivation(ArrayList<Double> x, double var){//TODO make decision about variance matrix
-        //System.out.println("input = " + x + ", means = " + means);
-        double variance = 1/(2*Math.pow(var, 2));
-        //System.out.println();
-        double error = Math.pow(dist.calculateDistance(x, means, 2),2);
-        //System.out.println("V: " + variance + ", E: " + error);
-        //System.out.println("exp(variance*error): " + Math.exp(variance*error));
-        return Math.exp(variance*error);
+    public double calculateActivation(ArrayList<Double> x, double var){
+        //input = (double)(x.get(0))+(double)(x.get(1));
+        double variance = 1/(2*Math.pow(var, 2));//calculates 1/2*sigma^2
+        double error = Math.pow(dist.calculateDistance(x, means, 2),2);//Calculates the squared distance between the input and the mean
+        return Math.exp(variance*error);//outputs e^variance*error
     }
     
 }
