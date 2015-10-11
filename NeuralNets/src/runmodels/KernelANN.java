@@ -28,13 +28,8 @@ public class KernelANN {
             outputs.add(0.0);
         }
         for(int m = 0; m < numFunctions; m++){//construct basis function nodes
-            RBFNode node = new RBFNode();
+            RBFNode node = new RBFNode(numOutputs);
             functions.add(node);
-            for(int i = 0; i < numOutputs; i++){
-                r = rand.nextDouble();
-                functions.get(m).outweights.add(r);//initialize to Random weights
-                functions.get(m).oldweights.add(r);
-            }
         }
     }
     public ArrayList<ArrayList> readData(String fname){
@@ -70,26 +65,44 @@ public class KernelANN {
         kMeansClustering(k, input, 1, var);//use input to cluster data
         totalError = (double)(Integer.MAX_VALUE);//set initial error to maximum value
         int count2 = 0;
-        while(totalError > threshold && count2 < 100){//until either convergence, or a certain number of iterations
+        while(totalError > threshold && count2 < 10){//until either convergence, or a certain number of iterations
             for(int i = 0; i < datasize; i++){//for each training example
                 for(int j = 0; j < k; j++){//for each RBF function
                     functions.get(j).activationOut = 
                             functions.get(j).calculateActivation(input.get(i), variance, dim2);//input each dimension into each RBF and calculate activation
                 }
                 double newOut = generateOutputs();//generate the output for the training example
-                
                 updateAllWeights(targets.get(i), newOut);//update all the weights using the new output
                 newError = calcError(targets.get(i), newOut);
-                System.out.println("New Error: " + newError + ", Old Error: " + totalError);
+                if(Double.isNaN(newError)){
+                    System.out.println("");
+                    System.out.println("i:" + i);
+                    System.out.println(" inputs: " + input);
+                    System.out.println("outputs: " + outputs);
+                    System.out.println("variance: " + variance);
+                    System.out.println("total error: " + totalError);
+                    System.out.println("dimensions: " + dim2);
+                    System.out.println("Data set size: " +datasize);
+                    for(int q = 0; q < k; q++){
+                        System.out.println("function = " + q + " : ");
+                        System.out.println("    Activation output: "+functions.get(q).activationOut);
+                        System.out.println("    Function mean: " + functions.get(q).means);
+                        System.out.println("    Old Weights: " + functions.get(q).oldweights);
+                        System.out.println("    New Weights: " +functions.get(q).outweights); 
+                    }
+                    System.exit(0);
+                }
+                //System.out.println("New Error: " + newError + ", Old Error: " + totalError);
                 if(newError <= totalError){
                 outputs.set(0, newOut);
                 totalError = calcError(targets.get(i), outputs.get(0));
                 }else{
                     revertWeights();
                 }
-                System.out.println("Total Error: " + totalError);
+                //System.out.println("Iteration: " + count2 + ", Total Error: " + totalError);
             }
             count2++;
+            System.out.println("Iteration: " + count2 + ", Total Error: " + totalError);
         }
     }
     
@@ -112,7 +125,6 @@ public class KernelANN {
     public double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
         outweight += (target-observed)*eta*input;//multiply this by input
-        //System.out.println("outweight: "+outweight);
         return outweight;
     }
     public void updateAllWeights(double target, double output){
@@ -130,7 +142,6 @@ public class KernelANN {
         double sum = 0;
         for (int i = 0; i < 1; i++) {
             //for each output node calculate weighted sum of hidden layers
-             //
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
                 sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
             }
@@ -138,7 +149,7 @@ public class KernelANN {
         return sum;
     }
     public void revertWeights(){
-        System.out.println("Weights reverted");
+        //System.out.println("Weights reverted");
         for(int i = 0; i< functions.size(); i++){
             for(int j = 0; j < outputs.size(); j++){
                 functions.get(i).outweights.set(j, functions.get(i).oldweights.get(j));
