@@ -15,10 +15,14 @@ public class Distance {
     public Distance(){
         
     }
-    public double calculateDistance(ArrayList<Double>x, ArrayList<Double> means){
+    public double calculateDistance(ArrayList<Double>x, ArrayList<Double> means, int dim){
+        //System.out.println("distance");
         double d = 0;
-        for(int i = 0; i < x.size();i++){
-            d += Math.pow(means.get(i)-x.get(i), 2);
+        for(int i = 0; i < dim;i++){
+            //System.out.println(means.get(i) + " : " + x.get(i));
+            double g = Double.parseDouble(""+means.get(i));
+            double h = Double.parseDouble(""+x.get(i));
+            d += Math.pow(g-h, 2);
         }
         d = Math.sqrt(d);
         return d;
