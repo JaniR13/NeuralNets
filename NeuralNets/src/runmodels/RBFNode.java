@@ -21,10 +21,10 @@ public class RBFNode {
     public RBFNode(){
         
     }
-    public double calculateActivation(ArrayList<Double> x, double var){
+    public double calculateActivation(ArrayList<Double> x, double var, int dim){
         //input = (double)(x.get(0))+(double)(x.get(1));
         double variance = 1/(2*Math.pow(var, 2));//calculates 1/2*sigma^2
-        double error = Math.pow(dist.calculateDistance(x, means, 2),2);//Calculates the squared distance between the input and the mean
+        double error = Math.pow(dist.calculateDistance(x, means, dim),2);//Calculates the squared distance between the input and the mean
         return Math.exp(variance*error);//outputs e^variance*error
     }
     
