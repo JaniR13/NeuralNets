@@ -15,10 +15,15 @@ public class RunModels {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        KernelANN x = new KernelANN();
-        String name = "C://Users//Janette//Documents//GradSchoolStuff//MachineLearning//Project2//rosenbrock_size2.txt";
-        x.trainNetwork(name, 11, 11, 0.00001);
-        System.out.println("Finished! Error: " + x.totalError );
+
+        for (int i = 0; i < 10; i++) {
+            KernelANN x = new KernelANN();
+            String name = "C://Users//Janette//Documents//GradSchoolStuff//MachineLearning//Project2//rosenbrock_size2.txt";
+            int iter = x.trainNetwork(name, 11, 11, 0.00001);
+            System.out.println("i: " + i + ", iterations: " + iter + ", Finished! Error: " + x.totalError);
+            
+            
+        }
     }
-    
+
 }
