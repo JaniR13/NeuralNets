@@ -17,6 +17,7 @@ public class KernelANN extends AbstractModel {
     public double totalError;
     public int dim2 = 0;
     public int datasize = 0;
+    public double obs;
     public KernelANN() {
 
     }
@@ -47,10 +48,7 @@ public class KernelANN extends AbstractModel {
             functions.add(node);
             //System.out.println(outputs.size());
             for(int i = 0; i < outputs.size(); i++){
-                //System.out.println(i + " : " + m);
-                //System.out.println(functions.get(m).outweights);
                 double r = rand.nextDouble();
-                //System.out.println(r);
                 functions.get(m).outweights.add(r);//initialize to Random weights
             }
             
@@ -106,19 +104,19 @@ public class KernelANN extends AbstractModel {
             for(int i = 0; i < datasize; i++){//for each training example
                 for(int j = 0; j < k; j++){//for each RBF function
                     //System.out.println("input: " + input.get(i));
-                    System.out.println("Run: " + i + " " + j + " : "+ functions.get(j).calculateActivation(input.get(i), variance));
+                    //System.out.println("Run: " + i + " " + j + " : "+ functions.get(j).calculateActivation(input.get(i), variance));
                     functions.get(j).activationOut = 
                             functions.get(j).calculateActivation(input.get(i), variance);
-                    System.out.println(functions.get(j).activationOut);
+                    //System.out.println("out error: " + functions.get(j).activationOut);
                        
                 }
                 generateOutputs();
-                updateAllWeights(targets);
-                ArrayList<Double> tar = new ArrayList();
-                tar.add(targets.get(i));
-                System.out.println("Unupdated error: " + totalError);
-                totalError = calcError(tar, outputs);
-                
+                updateAllWeights(targets.get(i));
+                //ArrayList<Double> tar = new ArrayList();
+               //tar.add(targets.get(i));
+                //System.out.println("Unupdated error: " + totalError);
+                totalError = calcError(targets.get(i), outputs.get(0));
+                System.out.println("Total Error: " + totalError);
                 //System.out.println(totalError + " : " + count2);
             }
             count2++;
@@ -127,7 +125,11 @@ public class KernelANN extends AbstractModel {
     }
     
     public double calcError(ArrayList target, ArrayList out){
+        System.out.println("target: " + target + ", out: " + out);
         return dist.calculateDistance(target, out, 1);
+    }
+    public double calcError(double target, double out){
+        return dist.calculateDistance(target, out);
     }
     public void kMeansClustering(int k, ArrayList<ArrayList> in, int outDim, double var){//input all examples and k
         KMeans kmeans = new KMeans();
@@ -139,23 +141,26 @@ public class KernelANN extends AbstractModel {
         for(int i = 0; i < functions.size(); i++){
             
             functions.get(i).means.addAll(meanslist.get(i));
-            System.out.println(functions.get(i).means);
+            //System.out.println(functions.get(i).means);
         }
         //variance?
         variance = var;    
     }
 
-    public double updateIndWeight(double inweight, double input, ArrayList<Double> target, ArrayList<Double> observed) {
+    public double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
-        outweight += dist.calculateDistance(target, observed, 1)*eta*input;//multiply this by input
+        outweight += (target-observed)*eta*input;//multiply this by input
+        System.out.println("outweight: "+outweight);
         return outweight;
     }
-    public void updateAllWeights(ArrayList<Double> target){
+    public void updateAllWeights(double target){
         double x = 0;
         for(int i = 0; i < functions.size(); i++){//for each hidden node
             for(int j = 0; j <outputs.size(); j++){
+                System.out.println(targets);
+                //System.out.println(outputs);
                 x = updateIndWeight(functions.get(i).outweights.get(j), 
-                        functions.get(i).activationOut, target, outputs);
+                        functions.get(i).activationOut, targets.get(i), outputs.get(i));
                 functions.get(i).outweights.set(j, x);
             }
         }
@@ -166,7 +171,9 @@ public class KernelANN extends AbstractModel {
             double sum = 0; //
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
                 sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
+                System.out.println("outweight ij: " + i+ " : " + j+" : " + functions.get(j).outweights.get(i));
             }
+            //System.out.println("i: " + i + ", output: " + sum);
             outputs.set(i, sum);
         }
     }
