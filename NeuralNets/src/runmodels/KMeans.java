@@ -31,6 +31,7 @@ public class KMeans {
                 clusters.get(i).add(rand.nextInt(10) - 5);
             }
         }
+        //System.out.println("begin clusters: " + clusters);
         //System.out.println("Clusters created: " + clusters);
         clusters = trainClusters(in, clusters, 5, inDim);
         //System.out.println("end clusters: " + clusters);
@@ -48,12 +49,12 @@ public class KMeans {
         }
         for (int i = 0; i < iter; i++) {//number of iterations
             for (int j = 0; j < in.size(); j++) {//each datapoint
-                
+
                 double curD = 11;
                 int smallestCluster = 0;
                 for (int c = 0; c < clusters.size(); c++) {
                     //System.out.println("iteration: "+ i + ", datapoint: " + j + ", cluster: " + c);
-                    
+
                     double tempD = d.calculateDistance(in.get(j), clusters.get(c), dim);//find closest cluster
                     //System.out.println(" i: " + i + ", j: " + j + ", c: " + c+", tempD: " + tempD + ", curD: " + curD + ", input: " + in.get(j));
                     if (tempD < curD) {
@@ -62,7 +63,7 @@ public class KMeans {
                         //System.out.println(curD + " and " + smallestCluster);
                     }
                 }
-                in.get(j).set(dim, (double)smallestCluster);
+                in.get(j).set(dim, (double) smallestCluster);
                 //System.out.println("smallest Cluster : " + in.get(j).get(dim));
                 //System.out.println("cluster: " + clusters.get((int)in.get(j).get(dim)));
             }
@@ -75,12 +76,12 @@ public class KMeans {
                     int count = 0;
                     for (int j = 0; j < insize; j++) {//each input
                         //ystem.out.println(in.get(j).get(dim));
-                        double c3 = (double)in.get(j).get(dim);
+                        double c3 = (double) in.get(j).get(dim);
                         //System.out.println("c3: " + c3);
-                        int c2 = (int)(c3);
+                        int c2 = (int) (c3);
                         //System.out.println("c2: " + c2);
                         if (c2 == c) {
-                            int blergh = (int)in.get(j).get(l);
+                            int blergh = (int) in.get(j).get(l);
                             //System.out.println("blergh: " + blergh);
                             dimAvg += (double) blergh;
                             //System.out.println("Dim Avg: " + dimAvg);
@@ -88,14 +89,18 @@ public class KMeans {
                             //ystem.out.println(count);
                         }
                     }
-                    //System.out.println("DimAvg: " + dimAvg + ", count: " + count + ", result: " + dimAvg/count);
-                    dimAvg = dimAvg/count;
+                    if (count != 0) {
+                        //System.out.println("DimAvg: " + dimAvg + ", count: " + count + ", result: " + dimAvg / count);
+                        dimAvg = dimAvg / count;
+                    } else {
+                        dimAvg = 0;
+                    }
                     clusters.get(c).set(l, dimAvg);
                 }
             }
-            //System.out.println(clusters);
+            //System.out.println(i + " : " + clusters);
         }
-        
+
         return clusters;
     }
 }
