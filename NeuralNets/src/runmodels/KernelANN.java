@@ -5,85 +5,58 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class KernelANN extends AbstractModel {
+public class KernelANN {
 
     //private ArrayList<Double> inputs;
-    private ArrayList<RBFNode> functions = new ArrayList();
-    private ArrayList<Double> outputs = new ArrayList();
-    private ArrayList<Double> targets = new ArrayList();
+    private ArrayList<RBFNode> functions = new ArrayList();//the list of RBF functions
+    private ArrayList<Double> outputs = new ArrayList();//ordinarily a single double but need an arbitrary number of outputs
+    private ArrayList<Double> targets = new ArrayList();//list of outputs of Rosenbrock function, our ideal numbers
     private double eta = 0.1;//learning rate
     private Distance dist = new Distance();
-    private double variance;
-    public double totalError;
-    public int dim2 = 0;
-    public int datasize = 0;
-    public double obs;
+    private double variance; //a constant representation of error in the dataset
+    public double totalError;//Error with each training example
+    public int dim2 = 0;//number of dimensions in the data set, set at read data
+    public int datasize = 0;//number of items in the data set
+    
     public KernelANN() {
-
     }
-
-    @Override
-    void compileResults() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    void execute() {
-        // TODO Auto-generated method stub
-
-    }
-
     public void buildNetwork(int numInputs, int numOutputs, int numFunctions) {
-        //System.out.println("build networks: in: " + numInputs + ", out: " + numOutputs + ", func: " +numFunctions);
         Random rand = new Random();
-//        for(int i = 0; i < numInputs; i++){ //TODO need to figure out if inputs means features or training examples...
-//            inputs.add(0.0);
-//        }
-        for(int j = 0; j < numOutputs; j++){
+        double r = 0.0;
+        for(int j = 0; j < numOutputs; j++){//construct output nodes
             outputs.add(0.0);
         }
-        for(int m = 0; m < numFunctions; m++){
+        for(int m = 0; m < numFunctions; m++){//construct basis function nodes
             RBFNode node = new RBFNode();
             functions.add(node);
-            //System.out.println(outputs.size());
-            for(int i = 0; i < outputs.size(); i++){
-                double r = rand.nextDouble();
+            for(int i = 0; i < numOutputs; i++){
+                r = rand.nextDouble();
                 functions.get(m).outweights.add(r);//initialize to Random weights
             }
-            
         }
     }
-    
     public ArrayList<ArrayList> readData(String fname){
-        BufferedReader br = null;
+        BufferedReader br = null;//read from data
 	String line = "";
 	String cvsSplitBy = ",";
-        ArrayList<ArrayList> input = new ArrayList();
+        ArrayList<ArrayList> input = new ArrayList();//list of examples in data set
         int count = 0;
-        //ArrayList output = new ArrayList();
 	try {
-
 		br = new BufferedReader(new FileReader(fname));
 		while ((line = br.readLine()) != null) {
-                    //System.out.println(line + " : " + count);
                     String[] example = line.split(cvsSplitBy);
-                    dim2 = example.length;
-                    //System.out.println(n-1);
+                    dim2 = example.length;//set number of dimensions in dataset
                     input.add(new ArrayList());
                     for(int i = 0; i<dim2-1; i++){
-                        //System.out.println(i + " " + count);
-                        int x = Integer.parseInt(example[i]);
-                        //System.out.println(x);
-                        input.get(count).add(x);
+                        int x = Integer.parseInt(example[i]);//change input to integers
+                        input.get(count).add(x);//add each dimension to list
                     }
                     dim2 = dim2-1;
-                    double x = Double.parseDouble(example[dim2]);
-                    //System.out.println(x);
+                    double x = Double.parseDouble(example[dim2]);//add each output to the target
                     targets.add(x);
                     count++;
                 }
-                datasize = count;
+                datasize = count;//set the datasize so we know where to count to
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -91,41 +64,27 @@ public class KernelANN extends AbstractModel {
     }
 
     public void trainNetwork(String fname, double var, int k, double threshold){
-        ArrayList<ArrayList> input = readData(fname);
-        System.out.println("finished read data");
-        kMeansClustering(k, input, 1, var);
-        System.out.println("finished clustering");
-        //System.out.println(Double.MAX_VALUE);
-        totalError = (double)(Integer.MAX_VALUE);
+        ArrayList<ArrayList> input = readData(fname);//initialize data
+        kMeansClustering(k, input, 1, var);//use input to cluster data
+        totalError = (double)(Integer.MAX_VALUE);//set initial error to maximum value
         int count2 = 0;
-        while(totalError > threshold && count2 < 10){
-            //System.out.println(" run " + count2);
-            System.out.println(count2 + " : " + totalError);
+        while(totalError > threshold && count2 < 100){//until either convergence, or a certain number of iterations
             for(int i = 0; i < datasize; i++){//for each training example
                 for(int j = 0; j < k; j++){//for each RBF function
-                    //System.out.println("input: " + input.get(i));
-                    //System.out.println("Run: " + i + " " + j + " : "+ functions.get(j).calculateActivation(input.get(i), variance));
                     functions.get(j).activationOut = 
-                            functions.get(j).calculateActivation(input.get(i), variance);
-                    //System.out.println("out error: " + functions.get(j).activationOut);
-                       
+                            functions.get(j).calculateActivation(input.get(i), variance);//input each dimension into each RBF and calculate activation
                 }
-                generateOutputs();
-                updateAllWeights(targets.get(i));
-                //ArrayList<Double> tar = new ArrayList();
-               //tar.add(targets.get(i));
-                //System.out.println("Unupdated error: " + totalError);
+                double newOut = generateOutputs();//generate the output for the training example
+                outputs.set(0, newOut);
+                updateAllWeights(targets.get(i), newOut);//update all the weights using the new output
                 totalError = calcError(targets.get(i), outputs.get(0));
                 System.out.println("Total Error: " + totalError);
-                //System.out.println(totalError + " : " + count2);
             }
             count2++;
         }
-        
     }
     
     public double calcError(ArrayList target, ArrayList out){
-        System.out.println("target: " + target + ", out: " + out);
         return dist.calculateDistance(target, out, 1);
     }
     public double calcError(double target, double out){
@@ -150,31 +109,33 @@ public class KernelANN extends AbstractModel {
     public double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
         outweight += (target-observed)*eta*input;//multiply this by input
-        System.out.println("outweight: "+outweight);
+        //System.out.println("outweight: "+outweight);
         return outweight;
     }
-    public void updateAllWeights(double target){
+    public void updateAllWeights(double target, double output){
         double x = 0;
         for(int i = 0; i < functions.size(); i++){//for each hidden node
             for(int j = 0; j <outputs.size(); j++){
-                System.out.println(targets);
-                //System.out.println(outputs);
+                //System.out.println("Targets: " + targets);
+                //System.out.println("outputs: " + outputs);
                 x = updateIndWeight(functions.get(i).outweights.get(j), 
-                        functions.get(i).activationOut, targets.get(i), outputs.get(i));
+                        functions.get(i).activationOut, target, output);
                 functions.get(i).outweights.set(j, x);
             }
         }
     }
-    public void generateOutputs() {
-        for (int i = 0; i < outputs.size(); i++) {
+    public double generateOutputs() {
+        double sum = 0;
+        for (int i = 0; i < 1; i++) {
             //for each output node calculate weighted sum of hidden layers
-            double sum = 0; //
+             //
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
                 sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
-                System.out.println("outweight ij: " + i+ " : " + j+" : " + functions.get(j).outweights.get(i));
+                //System.out.println("outweight ij: " + i+ " : " + j+" : " + functions.get(j).outweights.get(i));
             }
             //System.out.println("i: " + i + ", output: " + sum);
-            outputs.set(i, sum);
+            
         }
+        return sum;
     }
 }
