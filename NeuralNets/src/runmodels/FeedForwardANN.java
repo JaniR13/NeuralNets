@@ -1,419 +1,327 @@
 package runmodels;
 
-//import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class FeedForwardANN extends AbstractModel {
 
-	// https://svn.cms.waikato.ac.nz/svn/weka/branches/stable-3-2-1/weka/classifiers/neural/NeuralNetwork.java
+	public class FeedForwardANN {
 
-	// private AbstractFunction lossFunction;
-	private ArrayList<Double> inputs;
-	private double bias = 1;
-	// learning rate
-	private double eta = .4;
-	private ArrayList<Double> output;
-	private int layers;
-	// each "sub" arraylist is the nodes in a layer (didn't use a 2D array in
-	// case different
-	// layers have different numbers of nodes)
-	private ArrayList<ArrayList<ANNNode>> nodes;
+		private int layers;
+		private int numOutputs;
+		private int numHiddenNodesPerLayer;
+		private ArrayList<Double> outputs;
+		private ArrayList<ArrayList<Neuron>> nodes;
+		private ArrayList<Double> inputs;
+		private ArrayList<Double> targetOutputs;
+		private ActivationFunction f;
 
-	// TODO: this needs to go away once we figure out how to actually set this
-	// to something reasonable.
-	private int arbitraryLayerDepth = 4;
-	private ArrayList<Double> expectedOutputs = new ArrayList<Double>();
-	private boolean firstRun = true;
+		private double eta = .4;
+		private boolean momentum;
+		private double alpha = .6;
+		private double epsilon = .00001;
 
-	/**
-	 * Creates a new feed-forward neural network
-	 * 
-	 * @param layers
-	 *            number of layers in the network, INCLUDING hidden layer
-	 */
-	public FeedForwardANN(int layers) {
-		this.layers = layers;
-		output = new ArrayList<Double>();
-		nodes = new ArrayList<ArrayList<ANNNode>>();
-		createNetworkNodes();
+		/**
+		 * Creates a new feed-forward neural network
+		 * @param hiddenLayers number of hidden layers
+		 * @param numHiddenNodesPerLayer number of nodes in each hidden layer
+		 * @param inputs ArrayList of inputs (Doubles)
+		 * @param targetOutputs Arraylist of target outputs (Doubles)
+		 * @param logistic will a logistic activation function be used? (if not, defaults to linear)
+		 * @param momemtum will momentum be used?
+		 */
+		public FeedForwardANN(int hiddenLayers, int numHiddenNodesPerLayer,
+				ArrayList<Double> inputs, ArrayList<Double> targetOutputs,
+				boolean logistic, boolean momemtum) {
+			this.layers = hiddenLayers + 2;
+			outputs = new ArrayList<Double>();
+			nodes = new ArrayList<ArrayList<Neuron>>();
+			this.numHiddenNodesPerLayer = numHiddenNodesPerLayer;
+			this.targetOutputs = targetOutputs;
+			this.inputs = inputs;
+			this.numOutputs = targetOutputs.size();
+			this.momentum = momentum;
 
-	}
+			if (logistic) {
+				f = new Logistic();
+			} else {
+				f = new Linear();
+			}
 
-	/**
-	 * Populates network with nodes
-	 */
-	protected void createNetworkNodes() {
-		// creates EMPTY input layer
-		ArrayList<ANNNode> inputLayer = new ArrayList<ANNNode>();
-		nodes.add(inputLayer);
+			createNetworkNodes();
+			createNetworkLinks();
+		}
 
-		for (int i = 1; i < layers; i++) {
-			// creates one layer at a time
-			ArrayList<ANNNode> nextLayer = new ArrayList<ANNNode>();
-			for (int j = 0; j < arbitraryLayerDepth; j++) {
-				ANNNode nextNode = new ANNNode(new LogisticFunction());
-				nextLayer.add(nextNode);
-				// these two act as sort of an ID for the node
-				nextNode.setLayer(i);
-				nextNode.setDepth(j);
+		protected void generateOutput() {
+			// clear outputs at start
+			outputs.clear();
 
-				// sets output nodes as, well, input nodes
-				if (j == arbitraryLayerDepth) {
-					nextNode.setOutputNode(true);
+			// input layer
+			for (Neuron n : nodes.get(0)) {
+				for (Neuron d : n.getDescendants()) {
+					d.addInput(n.getOutput());
 				}
 			}
-			nodes.add(nextLayer);
-		}
-	}
 
-	/** Creates input-layer nodes once inputs are all given */
-	private void populateInputLayer() {
-		ANNNode biasNode = createBiasNode();
+			// hidden layers
+			for (int i = 1; i < layers - 1; i++) {
+				for (Neuron n : nodes.get(i)) {
+					// calculates output of this node
+					double nodeOutput = n.calcOutput();
 
-		for (int i = 1; i < inputs.size(); i++) {
-			ANNNode nextNode = new ANNNode(new LogisticFunction());
-			nextNode.setLayer(0);
-			nextNode.setDepth(i);
-			nextNode.setInputNode(true);
-			nodes.get(0).add(nextNode);
-		}
-
-		// adds every non-input node in the network as a descendant of bias node
-		for (int l = 1; l < layers; l++) {
-			for (ANNNode n : nodes.get(l)) {
-				biasNode.addDescendant(n);
-			}
-		}
-
-	}
-
-	/** Creates input-layer nodes with a number of given inputs - TESTING ONLY */
-	protected void populateInputLayer(int numInputs) {
-		createBiasNode();
-		for (int i = 0; i < numInputs; i++) {
-			ANNNode nextNode = new ANNNode(new LogisticFunction());
-			nextNode.setLayer(0);
-			nextNode.setDepth(i);
-			nextNode.setInputNode(true);
-			nodes.get(0).add(nextNode);
-		}
-	}
-
-	/**
-	 * Creates bias node and adds it to network
-	 */
-	private ANNNode createBiasNode() {
-		ANNNode biasNode = new ANNNode(new LogisticFunction());
-
-		// lives at first index of first layer
-		biasNode.setLayer(0);
-		biasNode.setDepth(0);
-		biasNode.setInputNode(true);
-
-		// sets its output
-		biasNode.setIsBiasNode(true);
-		biasNode.addInput(bias);
-
-		// adds itself to the network
-		nodes.get(0).add(biasNode);
-
-		return biasNode;
-
-	}
-
-	/**
-	 * Sets ancestor/descendant relationships for each node in network
-	 */
-	protected void createNetworkLinks() {
-		// set descendants
-		for (int i = 0; i < layers - 1; i++) {
-			for (ANNNode n1 : nodes.get(i)) {
-				// sets every node in the next layer as a descendant
-				for (ANNNode n2 : nodes.get(i + 1)) {
-					// DON'T DOUBLE COUNT BIAS NODE
-					if (!n1.isBiasNode()) {
-						n1.addDescendant(n2);
+					for (Neuron d : n.getDescendants()) {
+						// adds this node's output to the inputs of its descendants
+						d.addInput(nodeOutput);
 					}
 				}
 			}
-		}
 
-		// set ancestors
-		for (int i = 1; i < layers; i++) {
-			for (ANNNode n1 : nodes.get(i)) {
-				// sets every node in the previous layer as an ancestor
-				for (ANNNode n2 : nodes.get(i - 1)) {
-					n1.addAncestor(n2);
-				}
+			// 4. once you hit the output layer, save the output of that layer into
+			// a list/array
+			for (Neuron n : nodes.get(layers - 1)) {
+				outputs.add(n.calcOutput());
 			}
-		}
-	}
 
-	/** Gives inputs to the input layer */
-	private void giveInputs() {
-		int numInputNodes = nodes.get(0).size();
-
-		// all except bias node, which was taken care of by createBiasNode()
-		for (int i = 0; i < numInputNodes; i++) {
-			if (!nodes.get(0).get(i).isBiasNode()) {
-				nodes.get(0).get(i).addInput(inputs.get(i));
-				// TODO: testing, remove
-				// System.out.println("Added input " + inputs.get(i) +
-				// " to input node " + i);
-				// TODO: removed this so we stopped double-calculating this
-				// input
-				// nodes.get(0).get(i).calcOutput();
-			} else {
-				// TODO: testing, remove
-				// System.out.println("Bias node has input " +
-				// nodes.get(0).get(i).getInputs().get(0));
-			}
-		}
-	}
-
-	@Override
-	void compileResults() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	void execute() {
-		// TODO: this will need to somehow take our input, so that we can
-		// generate the output and use backprop
-		// when executing...
-
-	}
-
-	/**
-	 * Runs input through neural net and reports outputs
-	 * 
-	 * @param inputs
-	 *            ArrayList of Double-valued inputs, excluding bias
-	 * @return ArrayList of all outputs
-	 */
-	public ArrayList<Double> generateOutput(ArrayList<Double> inputs) {
-
-		// TODO: next several lines should be done ONLY the first time this is
-		// run!!!
-
-		if (firstRun == true) {
-			// sets inputs
-			this.inputs = inputs;
-			// puts nodes into first layer of network (others were already
-			// created
-			// by createNetworkNodes)
-			populateInputLayer();
-			// links nodes in network
-			createNetworkLinks();
-			// gives inputs to input nodes
-			giveInputs();
-		} else {
-			// clear inputs to all non-input nodes
-			for (int i = 1; i < layers; i++) {
-				for (int j = 0; j < nodes.get(i).size(); j++) {
-					nodes.get(i).get(j).clearInputs();
-				}
-			}
-			// clear outputs
-			output.clear();
-		}
-		firstRun = false;
-
-		// runs through one layer at a time, EXCEPT output layer
-		for (int i = 0; i < layers - 1; i++) {
-			for (ANNNode n : nodes.get(i)) {
-				// calculates output of this node
-				double nodeOutput = n.calcOutput();
-
-				for (ANNNode d : n.getDescendants()) {
-					// adds this node's output to the inputs of its descendants
-					d.addInput(nodeOutput);
-					// System.out.println("Node " + n.getLayer() + n.getDepth()
-					// + " passed an input to node " + d.getLayer() +
-					// d.getDepth());
-				}
-			}
-			// System.out.println(" ");
-		}
-
-		// 4. once you hit the output layer, save the output of that layer into
-		// a list/array
-		for (ANNNode n : nodes.get(layers - 1)) {
-			output.add(n.calcOutput());
-		}
-
-		// TODO: testing, remove
-		System.out.println();
-		System.out.println("Outputs:");
-		for (int i = 0; i < output.size(); i++) {
-			System.out.println(output.get(i));
-		}
-		System.out.println();
-
-		return output;
-	}
-
-	/**
-	 * Carries out a single backward propagation - will need to be called
-	 * repeatedly, alternating with generateOutput
-	 */
-	public void backProp() {
-
-		// TODO: testing, remove
-		/**
-		 * ArrayList<ArrayList<Double>> initWeights = new
-		 * ArrayList<ArrayList<Double>>(); for (int i = 0; i < layers; i++) {
-		 * for (ANNNode n : nodes.get(i)) { initWeights.add(n.getWeights()); } }
-		 */
-
-		// remove all previous errors
-		for (int i = 0; i < layers; i++) {
-			for (ANNNode n : nodes.get(i)) {
-				n.setError(0);
-			}
-		}
-
-		// case 1 - output layer
-		System.out.println("Output Layer: ");
-		// foreach node N in output layer
-		for (int n = 0; n < output.size(); n++) {
-			int numWeights = nodes.get(layers - 1).get(n).getWeights().size();
-			// foreach weight on node N
-			for (int weightIndex = 0; weightIndex < numWeights; weightIndex++) {
-				// gets the value of the "weightIndex"th weight of node n
-				double w = nodes.get(layers - 1).get(n).getWeights()
-						.get(weightIndex);
-
-				ANNNode thisNode = nodes.get(layers - 1).get(n);
-				double expectedNOutput = expectedOutputs.get(n);
-				thisNode.calcError(expectedNOutput);
-				// calculates change in weight
-				double delta_w = eta * (expectedNOutput - thisNode.getOutput())
-						* thisNode.getOutput() * (1 - thisNode.getOutput())
-						* thisNode.getInputs().get(weightIndex);
-				w += delta_w;
-
-				// TODO: testing, remove
-				System.out.println("[Node: WI | " + n + ": " + weightIndex
-						+ "] delta: " + delta_w + "   error: "
-						+ thisNode.getError());
-
-				// sets this weight's value to w
-				nodes.get(layers - 1).get(n).getWeights().set(weightIndex, w);
-			}
-			nodes.get(layers - 1).get(n).printWeights();
-			System.out.println();
-		}
-
-		// case 2 - hidden units & input
-
-		// foreach layer L, working backward from last hidden layer
-		for (int layer = (layers - 2); layer >= 0; layer--) {
 			// TODO: testing, remove
 			System.out.println();
-			System.out.println("Layer: " + layer);
+			System.out.println("Outputs:");
+			for (int i = 0; i < outputs.size(); i++) {
+				System.out.println(outputs.get(i));
+			}
+			System.out.println();
+		}
 
-			// foreach node in this layer
-			for (int n = 0; n < (nodes.get(layer).size()); n++) {
-				ANNNode thisNode = nodes.get(layer).get(n);
+		protected void train() {
+			generateOutput();
+			
+			while (!testTerminationCriterion()) {
 
-				// calculates error on this node
-				double nodeError = thisNode.getOutput()
-						* (1 - thisNode.getOutput());
-				for (ANNNode desc : thisNode.getDescendants()) {
-					// factors in descendants' errors
-					// TODO: need to include the gradient/derivative!
-					nodeError += (desc.getError() * desc.getWeights().get(n));
+				// below here is actual backprop
+
+				// 1) output layer
+				int target = 0;
+				for (Neuron n : nodes.get(layers - 1)) {
+					// System.out.println(n.toString());
+					// calculates delta
+					Double d = calcOutputDelta(n, targetOutputs.get(target));
+
+					// calculates each weight change
+					for (int w = 0; w < n.getWeights().size(); w++) {
+						// System.out.println(n.getWeights().get(w) +
+						// " -- Output delta: " + d);
+						// System.out.println(n.getWeights().get(w) + " --  <>w: " +
+						// calcOutputWeightChange(n, d, w));
+						if (!momentum){
+							n.addWeightChange(calcOutputWeightChange(n, d, w));
+						} else {
+							n.addWeightChange(calcOutputWeightChangeM(n,d,w));
+							
+						}
+						// n.getWeights().set(w, n.getWeights().get(w) +
+						// calcOutputWeightChange(n, d, w));
+						// System.out.println();
+					}
+					target++;
 				}
 
-				thisNode.setError(nodeError);
-				int numWeights = thisNode.getWeights().size();
+				// 2) hidden layers
+				for (int layer = (layers - 2); layer > 0; layer--) {
+					for (Neuron n : nodes.get(layer)) {
+						// System.out.println(n.toString());
+						// calculates delta
+						Double d = calcHiddenDelta(n, n.getDepth());
 
-				// foreach weight on node N
-				for (int weightIndex = 0; weightIndex < numWeights; weightIndex++) {
-					double w = thisNode.getWeights().get(weightIndex);
-					double delta_w = eta * thisNode.getError()
-							* thisNode.getWeights().get(weightIndex);
-					w += delta_w;
+						// calculates each weight change
+						for (int w = 0; w < n.getWeights().size(); w++) {
+							// System.out.println(n.getWeights().get(w) +
+							// " -- Hidden delta: " + d);
+							// System.out.println(n.getWeights().get(w) +
+							// " -- <>w: " + calcHiddenWeightChange(n, d, w));
+							if (!momentum){
+								n.addWeightChange(calcHiddenWeightChange(n, d, w));
+							} else {
+								n.addWeightChange(calcHiddenWeightChangeM(n, d, w));
 
-					// TODO: testing, remove
-					System.out.println("[Node: WI | " + n + ": " + weightIndex
-							+ "] delta: " + delta_w + "   error: "
-							+ thisNode.getError());
-
-					// sets this weight's value to w
-					nodes.get(layer).get(n).getWeights().set(weightIndex, w);
+							}
+							// n.getWeights().set(w, n.getWeights().get(w) +
+							// calcHiddenWeightChange(n, d, w));
+							// System.out.println();
+						}
+					}
 				}
-				thisNode.printWeights();
+
+				// update all weights
+				for (int l = 1; l < layers; l++) {
+					for (Neuron n : nodes.get(l)) {
+						n.updateWeights();
+					}
+				}
+
+				// for all nodes, clear inputs
+				// (output already taken care of in Neuron.calcOutput()
+				for (int l = 1; l < layers; l++) {
+					for (Neuron n : nodes.get(l)) {
+						n.clearInputs();
+					}
+				}
+				generateOutput();
+			} 
+		}
+
+		/** Calculates weight change for a hidden node */
+		protected Double calcHiddenWeightChange(Neuron n, Double delta,
+				int weightIndex) {
+			return (eta * delta * n.getWeights().get(weightIndex));
+		}
+		
+		/** Calculates weight change for a hidden node using momentum */
+		protected Double calcHiddenWeightChangeM(Neuron n, Double delta,
+				int weightIndex) {
+			return (eta * delta * n.getWeights().get(weightIndex) + alpha * n.getPrevDeltaW(weightIndex));
+		}
+
+		/** Calculates delta for a hidden node */
+		protected Double calcHiddenDelta(Neuron n, int weightIndex) {
+			Double delta = n.getActivation().partialDeriv(n.getOutput());
+			Double sumDS = 0.0;
+
+			// loops through next layer
+			for (Neuron desc : n.getDescendants()) {
+				// factors in descendants' errors
+				// should be weightIndex + 1 because weight to bias node always 1st
+				sumDS += (desc.getDelta() * desc.getWeights().get(weightIndex + 1));
+			}
+			return delta * sumDS;
+			// return;
+		}
+
+		/** Calculates delta for an output node */
+		protected Double calcOutputDelta(Neuron n, Double target) {
+			Double delta = -1
+					* n.getError().calcDerivwrtOutput(n.getOutput(), target);
+			delta *= n.getActivation().partialDeriv(n.getOutput());
+			n.setDelta(delta);
+			return delta;
+		}
+
+		/** Calculates weight change for an output node */
+		protected Double calcOutputWeightChange(Neuron n, Double delta,
+				int weightIndex) {
+			return (eta * delta * n.getInputs().get(weightIndex));
+		}
+
+		/** Calculates weight change for an output node using momentum*/
+		protected Double calcOutputWeightChangeM(Neuron n, Double delta,
+				int weightIndex) {
+			return (eta * delta * n.getInputs().get(weightIndex) + alpha * n.getPrevDeltaW(weightIndex));
+		}
+		
+		private boolean testTerminationCriterion() {
+			// terminates when all outputs are within a certain epsilon of target
+			for (int o = 0; o < numOutputs; o++) {
+				if (Math.abs(outputs.get(o) - targetOutputs.get(o)) > epsilon) {
+					return false;
+				}
+			}
+			System.out.println("Within epsilon for all outputs");
+			return true;
+		}
+
+		/** Creates all nodes in network */
+		private void createNetworkNodes() {
+			// input layer
+			ArrayList<Neuron> inputNodes = new ArrayList<Neuron>();
+			// bias node
+			Neuron biasNode = new Neuron(f, 0, 0, 0);
+			biasNode.setBias(true);
+			inputNodes.add(biasNode);
+			// other input nodes
+			for (int n = 1; n <= inputs.size(); n++) {
+				Neuron node = new Neuron(f, 0, n, 0);
+				node.addInput(inputs.get(n - 1));
+				node.setOutput(inputs.get(n - 1));
+				node.setInputNode(true);
+				inputNodes.add(node);
+
+			}
+			nodes.add(inputNodes);
+
+			// hidden layers
+			for (int l = 1; l < layers - 1; l++) {
+				ArrayList<Neuron> newLayer = new ArrayList<Neuron>();
+				for (int n = 0; n < numHiddenNodesPerLayer; n++) {
+					Neuron node;
+					if (l == 1) {
+						// first hidden layer already includes bias in the number of
+						// inputs
+						node = new Neuron(f, l, n, nodes.get(l - 1).size());
+					} else {
+						// need to add 1 since bias is also an input
+						node = new Neuron(f, l, n, nodes.get(l - 1).size() + 1);
+					}
+					newLayer.add(node);
+				}
+				nodes.add(newLayer);
+			}
+
+			// output layer
+			ArrayList<Neuron> outputNodes = new ArrayList<Neuron>();
+			for (int n = 0; n < numOutputs; n++) {
+				// .size()+1 is because of bias node
+				Neuron node = new Neuron(f, layers - 1, n, nodes.get(layers - 2)
+						.size() + 1);
+				node.setOutputNode(true);
+				outputNodes.add(node);
+			}
+			nodes.add(outputNodes);
+		}
+
+		/**
+		 * Sets ancestor/descendant relationships for each node in network
+		 */
+		protected void createNetworkLinks() {
+			// set descendants
+			for (int i = 0; i < layers - 1; i++) {
+				for (Neuron n1 : nodes.get(i)) {
+					// sets every node in the next layer as a descendant
+					for (Neuron n2 : nodes.get(i + 1)) {
+						// DON'T DOUBLE COUNT BIAS NODE
+						if (!n1.isBias()) {
+							n1.addDescendant(n2);
+						}
+					}
+				}
+			}
+			System.out.println();
+
+			// set ancestors
+			for (int i = 1; i < layers; i++) {
+				for (Neuron n1 : nodes.get(i)) {
+					// sets every node in the previous layer as an ancestor
+					for (Neuron n2 : nodes.get(i - 1)) {
+						n1.addAncestor(n2);
+					}
+				}
+			}
+
+			// bias node (last)
+			for (int i = 1; i < layers; i++) {
+				for (Neuron n : nodes.get(i)) {
+					nodes.get(0).get(0).addDescendant(n);
+				}
+			}
+		}
+
+		/** To be used for testing */
+		public void print() {
+			// goes by layer
+			for (int l = 0; l < layers; l++) {
+				// for each node in the layer:
+				for (int n = 0; n < nodes.get(l).size(); n++) {
+					System.out.print(nodes.get(l).get(n).toString());
+				}
 				System.out.println();
 			}
 			System.out.println();
 		}
 
-		// TODO: testing, remove
-		// TODO: testing, remove
-/**
-		ArrayList<ArrayList<Double>> endWeights = new ArrayList<ArrayList<Double>>();
-		for (int i = 0; i < layers; i++) {
-			for (ANNNode n : nodes.get(i)) {
-				endWeights.add(n.getWeights());
-			}
-		}
-
-		for (int i = 0; i < initWeights.size(); i++) {
-			System.out.println();
-			System.out.print("<");
-			for (int j = 0; j < initWeights.get(i).size(); j++) {
-				System.out.print(initWeights.get(i).get(j) + "  ");
-			}
-			System.out.print(">");
-		}
-		System.out.println();
-		for (int i = 0; i < endWeights.size(); i++) {
-			System.out.println();
-			System.out.print("<");
-			for (int j = 0; j < endWeights.get(i).size(); j++) {
-				System.out.print(endWeights.get(i).get(j) + "  ");
-			}
-			System.out.print(">");
-		}
-		System.out.println();*/
 	}
 
-	/** To be used for testing */
-	public void print() {
-		// goes by layer
-		for (int l = 0; l < layers; l++) {
-			// for each node in the layer:
-			for (int n = 0; n < nodes.get(l).size(); n++) {
-				System.out.print(nodes.get(l).get(n).toString());
-			}
-			System.out.println();
-			System.out.println();
-		}
-	}
-
-	public ArrayList<Double> getInputs() {
-		return inputs;
-	}
-
-	public ArrayList<ArrayList<ANNNode>> getNodes() {
-		return nodes;
-	}
-
-	public void setExpectedOutputs(ArrayList<Double> expectedOutputs) {
-		// TODO: size check
-		this.expectedOutputs = expectedOutputs;
-	}
-
-	/**
-	 * Allows user/caller to set eta, potentially useful for parameter tuning
-	 */
-	public void setEta(double newEta) {
-		if (newEta < 1 && newEta > 0) {
-			eta = newEta;
-		}
-	}
-
-}
