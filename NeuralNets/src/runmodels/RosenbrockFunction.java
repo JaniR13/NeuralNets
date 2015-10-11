@@ -1,6 +1,7 @@
 package runmodels;
 
 import java.io.*;
+import java.util.Random;
 
 /*
  * A class to create a .csv file consisting of the inputs to the Rosenbrock function 
@@ -24,14 +25,22 @@ public class RosenbrockFunction extends AbstractFunction {
 		double intermediatecalc;
 		double sum = 0;
 
-		// open file to write inputs/outputs to
+		//file to write the full spectrum of inputs/outputs to
 		BufferedWriter writer = null;
-
+		//file to write a subset of the inputs/outputs to
+		BufferedWriter trainWriter = null;
+		//file to write a smaller subset of the inputs/outputs to
+		BufferedWriter testWriter = null;
+		
 		try {
 			FileWriter fileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrock.txt");
-
+			FileWriter testFileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrockTest.txt");
+			FileWriter trainFileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrockTrain.txt");			
+			
 			writer = new BufferedWriter(fileWriter);
-
+			trainWriter = new BufferedWriter(trainFileWriter);
+			testWriter = new BufferedWriter(testFileWriter);			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -324,21 +333,84 @@ public class RosenbrockFunction extends AbstractFunction {
 		} // end if
 		
 		System.out.println("Rosenbrock output generated.");
+
 		try {
+			//closes the writer for the file consisting of all inputs/outputs
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//a reader to read the file of all inputs/outputs
+		BufferedReader reader = null;
+
+		try {
+			//the current line in the full file
+			String sCurrentLine;
+			//a random number to decide which line goes to the appropriate file
+			int randomNumber = 0;
+			
+			//a reader used to read the full file of Rosenbrock outputs
+			reader = new BufferedReader(new FileReader("NeuralNets/src/runmodels/rosenbrock.txt"));
+
+			//while there is still data left to be read
+			while ((sCurrentLine = reader.readLine()) != null) {
+				//generate a random number to determine whether line should be in training or test set
+				randomNumber = randInt(0, 5);
+				// print to test data, ~80% of data goes to test set
+				if (randomNumber == 0 || randomNumber == 1 || randomNumber == 3 || randomNumber == 4 || randomNumber == 5) {
+					trainWriter.write(sCurrentLine);
+					trainWriter.newLine();
+				} else {
+				// print to training data, ~20% of data goes to training set
+					testWriter.write(sCurrentLine);
+					testWriter.newLine();
+				}
+			}
+			System.out.println("Rosenbrock test and train data generated.");	
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null)reader.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+				
+		//close the writers for the train and test datasets
+		try {
+			trainWriter.close();
+			testWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 	}
 
-	// remove these?
+	//generates a random number, used to determine if line should go in test or train set
+	public static int randInt(int min, int max) {			
+	    Random rand = new Random();
+	    //generates a random number between two inclusive values
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
+	}
+	
+	//TODO: if time allows, move calculation of Rosenbrock function down here and call
 	public double calcfx(double x) {
 		return 0.00;
 	}
 
+	//the derivative calculation is not necessary for this function
 	public double calcderivfx(double x) {
 		return 0.00;
 	}
+	
+	
+	
 
 }
