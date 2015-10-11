@@ -15,6 +15,7 @@ public class KernelANN {
     private Distance dist = new Distance();
     private double variance; //a constant representation of error in the dataset
     public double totalError;//Error with each training example
+    public double newError;
     public int dim2 = 0;//number of dimensions in the data set, set at read data
     public int datasize = 0;//number of items in the data set
     
@@ -32,6 +33,7 @@ public class KernelANN {
             for(int i = 0; i < numOutputs; i++){
                 r = rand.nextDouble();
                 functions.get(m).outweights.add(r);//initialize to Random weights
+                functions.get(m).oldweights.add(r);
             }
         }
     }
@@ -72,12 +74,19 @@ public class KernelANN {
             for(int i = 0; i < datasize; i++){//for each training example
                 for(int j = 0; j < k; j++){//for each RBF function
                     functions.get(j).activationOut = 
-                            functions.get(j).calculateActivation(input.get(i), variance);//input each dimension into each RBF and calculate activation
+                            functions.get(j).calculateActivation(input.get(i), variance, dim2);//input each dimension into each RBF and calculate activation
                 }
                 double newOut = generateOutputs();//generate the output for the training example
-                outputs.set(0, newOut);
+                
                 updateAllWeights(targets.get(i), newOut);//update all the weights using the new output
+                newError = calcError(targets.get(i), newOut);
+                System.out.println("New Error: " + newError + ", Old Error: " + totalError);
+                if(newError <= totalError){
+                outputs.set(0, newOut);
                 totalError = calcError(targets.get(i), outputs.get(0));
+                }else{
+                    revertWeights();
+                }
                 System.out.println("Total Error: " + totalError);
             }
             count2++;
@@ -92,17 +101,11 @@ public class KernelANN {
     }
     public void kMeansClustering(int k, ArrayList<ArrayList> in, int outDim, double var){//input all examples and k
         KMeans kmeans = new KMeans();
-        //ArrayList in = readData(fname);
         ArrayList<ArrayList> meanslist = kmeans.createClusters(k, in, dim2);
-        //System.out.println(meanslist);
-        //int inDim = meanslist.get(0).size();
         buildNetwork(dim2, outDim, k);
         for(int i = 0; i < functions.size(); i++){
-            
             functions.get(i).means.addAll(meanslist.get(i));
-            //System.out.println(functions.get(i).means);
         }
-        //variance?
         variance = var;    
     }
 
@@ -116,8 +119,7 @@ public class KernelANN {
         double x = 0;
         for(int i = 0; i < functions.size(); i++){//for each hidden node
             for(int j = 0; j <outputs.size(); j++){
-                //System.out.println("Targets: " + targets);
-                //System.out.println("outputs: " + outputs);
+                functions.get(i).oldweights.set(j, functions.get(i).outweights.get(j));
                 x = updateIndWeight(functions.get(i).outweights.get(j), 
                         functions.get(i).activationOut, target, output);
                 functions.get(i).outweights.set(j, x);
@@ -131,11 +133,16 @@ public class KernelANN {
              //
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
                 sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
-                //System.out.println("outweight ij: " + i+ " : " + j+" : " + functions.get(j).outweights.get(i));
             }
-            //System.out.println("i: " + i + ", output: " + sum);
-            
         }
         return sum;
+    }
+    public void revertWeights(){
+        System.out.println("Weights reverted");
+        for(int i = 0; i< functions.size(); i++){
+            for(int j = 0; j < outputs.size(); j++){
+                functions.get(i).outweights.set(j, functions.get(i).oldweights.get(j));
+            }
+        }
     }
 }
