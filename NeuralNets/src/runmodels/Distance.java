@@ -27,6 +27,11 @@ public class Distance {
         d = Math.sqrt(d);
         return d;
     }
+    public double calculateDistance(double x, double means){
+        double d = Math.pow(x-means, 2);
+        d = Math.sqrt(d);
+        return d;
+    }
 //    public double calculateDifference(ArrayList<Double>expected, ArrayList<Double> observed){
 //        double d = 0;
 //        for(int i = 0; i < expected.size();i++){
