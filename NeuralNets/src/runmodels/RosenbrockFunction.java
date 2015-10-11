@@ -1,6 +1,7 @@
 package runmodels;
 
 import java.io.*;
+import java.util.Random;
 
 /*
  * A class to create a .csv file consisting of the inputs to the Rosenbrock function 
@@ -26,12 +27,18 @@ public class RosenbrockFunction extends AbstractFunction {
 
 		// open file to write inputs/outputs to
 		BufferedWriter writer = null;
-
+		BufferedWriter trainWriter = null;
+		BufferedWriter testWriter = null;
+		
 		try {
 			FileWriter fileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrock.txt");
-
+			FileWriter testFileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrockTest.txt");
+			FileWriter trainFileWriter = new FileWriter("NeuralNets/src/runmodels/rosenbrockTrain.txt");			
+			
 			writer = new BufferedWriter(fileWriter);
-
+			trainWriter = new BufferedWriter(trainFileWriter);
+			testWriter = new BufferedWriter(testFileWriter);			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -324,14 +331,71 @@ public class RosenbrockFunction extends AbstractFunction {
 		} // end if
 		
 		System.out.println("Rosenbrock output generated.");
+
 		try {
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		BufferedReader reader = null;
+
+		try {
+
+			String sCurrentLine;
+			int randomNumber = 0;
+			
+			reader = new BufferedReader(new FileReader("NeuralNets/src/runmodels/rosenbrock.txt"));
+
+			while ((sCurrentLine = reader.readLine()) != null) {
+				//generate a random number to determine whether line should be in training or test set
+				randomNumber = randInt(0, 5);
+				// print to test data
+				if (randomNumber == 0 || randomNumber == 1 || randomNumber == 3 || randomNumber == 4 || randomNumber == 5) {
+					trainWriter.write(sCurrentLine);
+					trainWriter.newLine();
+				} else {
+				// print to training data
+					testWriter.write(sCurrentLine);
+					testWriter.newLine();
+				}
+			}
+			System.out.println("Rosenbrock test and train data generated.");	
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null)reader.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		
+		
+		//generate test and train sets
+		try {
+			trainWriter.close();
+			testWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 
+	public static int randInt(int min, int max) {			
+	    Random rand = new Random();
+
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
+	}
+	
 	// remove these?
 	public double calcfx(double x) {
 		return 0.00;
@@ -340,5 +404,8 @@ public class RosenbrockFunction extends AbstractFunction {
 	public double calcderivfx(double x) {
 		return 0.00;
 	}
+	
+	
+	
 
 }

@@ -16,6 +16,7 @@ public class RunModels {
      */
     public static void main(String[] args) {
         AbstractModel x = new NeuralNets();
+        AbstractFunction rf = new RosenbrockFunction(2);
     }
     
 }
