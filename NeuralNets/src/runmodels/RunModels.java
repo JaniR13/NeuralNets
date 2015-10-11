@@ -16,13 +16,16 @@ public class RunModels {
      */
     public static void main(String[] args) {
 
-        for (int i = 0; i < 10; i++) {
-            KernelANN x = new KernelANN();
-            String name = "C://Users//Janette//Documents//GradSchoolStuff//MachineLearning//Project2//rosenbrock_size2.txt";
-            int iter = x.trainNetwork(name, 11, 11, 0.00001);
-            System.out.println("i: " + i + ", iterations: " + iter + ", Finished! Error: " + x.totalError);
+        for (int i = 0; i < 1; i++) {
+            KernelANN x2 = new KernelANN();
+            String name2 = "C:\\Users\\Janette\\Documents\\GradSchoolStuff\\MachineLearning\\Project2\\RosenbrockTrainData\\RosenbrockTrainData\\rosenbrockTrain2.txt";
+            int iter2 = x2.trainNetwork(name2, 11, 11, 120);
+            System.out.println("i: " + i + ", iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
             
-            
+//            KernelANN x3 = new KernelANN();
+//            String name3 = "C:\\Users\\Janette\\Documents\\GradSchoolStuff\\MachineLearning\\Project2\\RosenbrockTrainData\\RosenbrockTrainData\\rosenbrockTrain3.txt";
+//            int iter3 = x3.trainNetwork(name3, 11, 11, 0.00001);
+//            System.out.println("i: " + i + ", iterations: " + iter3 + ", Finished! Error: " + x3.totalError);
         }
     }
 
