@@ -11,11 +11,11 @@ public class KernelANN {
     private ArrayList<RBFNode> functions = new ArrayList();//the list of RBF functions
     private ArrayList<Double> outputs = new ArrayList();//ordinarily a single double but need an arbitrary number of outputs
     private ArrayList<Double> targets = new ArrayList();//list of outputs of Rosenbrock function, our ideal numbers
-    private double eta = 0.1;//learning rate
+    private double eta = 1;//learning rate
     private Distance dist = new Distance();
     private double variance; //a constant representation of error in the dataset
     public double totalError;//Error with each training example
-    public double newError;
+    public double newError; //Error after update
     public int dim2 = 0;//number of dimensions in the data set, set at read data
     public int datasize = 0;//number of items in the data set
     
@@ -28,13 +28,8 @@ public class KernelANN {
             outputs.add(0.0);
         }
         for(int m = 0; m < numFunctions; m++){//construct basis function nodes
-            RBFNode node = new RBFNode();
+            RBFNode node = new RBFNode(numOutputs);
             functions.add(node);
-            for(int i = 0; i < numOutputs; i++){
-                r = rand.nextDouble();
-                functions.get(m).outweights.add(r);//initialize to Random weights
-                functions.get(m).oldweights.add(r);
-            }
         }
     }
     public ArrayList<ArrayList> readData(String fname){
@@ -65,32 +60,40 @@ public class KernelANN {
         return input;
     }
 
-    public void trainNetwork(String fname, double var, int k, double threshold){
+    public int trainNetwork(String fname, double var, int k, double threshold){
         ArrayList<ArrayList> input = readData(fname);//initialize data
         kMeansClustering(k, input, 1, var);//use input to cluster data
         totalError = (double)(Integer.MAX_VALUE);//set initial error to maximum value
         int count2 = 0;
-        while(totalError > threshold && count2 < 100){//until either convergence, or a certain number of iterations
+        while(totalError > threshold && count2 < 10000){//until either convergence, or a certain number of iterations
             for(int i = 0; i < datasize; i++){//for each training example
                 for(int j = 0; j < k; j++){//for each RBF function
                     functions.get(j).activationOut = 
                             functions.get(j).calculateActivation(input.get(i), variance, dim2);//input each dimension into each RBF and calculate activation
                 }
+                int sum = 0;
+                for(int d = 0; d < dim2; d++){
+                    int n = (int)input.get(i).get(d);
+                    sum += n;
+                }
+                //System.out.println(sum);
+                //System.out.println(input.get(i));
                 double newOut = generateOutputs();//generate the output for the training example
-                
-                updateAllWeights(targets.get(i), newOut);//update all the weights using the new output
+                updateAllWeights(targets.get(i), newOut, sum);//update all the weights using the new output
                 newError = calcError(targets.get(i), newOut);
-                System.out.println("New Error: " + newError + ", Old Error: " + totalError);
+                //System.out.println("New Error: " + newError + ", Old Error: " + totalError);
                 if(newError <= totalError){
                 outputs.set(0, newOut);
                 totalError = calcError(targets.get(i), outputs.get(0));
                 }else{
                     revertWeights();
                 }
-                System.out.println("Total Error: " + totalError);
+                //System.out.println("Iteration: " + count2 + ", Total Error: " + totalError);
             }
             count2++;
+            //System.out.println("Iteration: " + count2 + ", Total Error: " + totalError);
         }
+        return count2;
     }
     
     public double calcError(ArrayList target, ArrayList out){
@@ -104,6 +107,7 @@ public class KernelANN {
         ArrayList<ArrayList> meanslist = kmeans.createClusters(k, in, dim2);
         buildNetwork(dim2, outDim, k);
         for(int i = 0; i < functions.size(); i++){
+            //System.out.println("means: " + meanslist.get(i));
             functions.get(i).means.addAll(meanslist.get(i));
         }
         variance = var;    
@@ -111,11 +115,10 @@ public class KernelANN {
 
     public double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
-        outweight += (target-observed)*eta*input;//multiply this by input
-        //System.out.println("outweight: "+outweight);
+        outweight += (target-observed)*(eta/datasize)*input;//multiply this by input
         return outweight;
     }
-    public void updateAllWeights(double target, double output){
+    public void updateAllWeights(double target, double output, double input){
         double x = 0;
         for(int i = 0; i < functions.size(); i++){//for each hidden node
             for(int j = 0; j <outputs.size(); j++){
@@ -130,7 +133,6 @@ public class KernelANN {
         double sum = 0;
         for (int i = 0; i < 1; i++) {
             //for each output node calculate weighted sum of hidden layers
-             //
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
                 sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
             }
@@ -138,7 +140,7 @@ public class KernelANN {
         return sum;
     }
     public void revertWeights(){
-        System.out.println("Weights reverted");
+        //System.out.println("Weights reverted");
         for(int i = 0; i< functions.size(); i++){
             for(int j = 0; j < outputs.size(); j++){
                 functions.get(i).outweights.set(j, functions.get(i).oldweights.get(j));
