@@ -351,12 +351,12 @@ public class RosenbrockFunction extends AbstractFunction {
 			while ((sCurrentLine = reader.readLine()) != null) {
 				//generate a random number to determine whether line should be in training or test set
 				randomNumber = randInt(0, 5);
-				// print to test data
+				// print to test data, ~80% of data goes to test set
 				if (randomNumber == 0 || randomNumber == 1 || randomNumber == 3 || randomNumber == 4 || randomNumber == 5) {
 					trainWriter.write(sCurrentLine);
 					trainWriter.newLine();
 				} else {
-				// print to training data
+				// print to training data, ~20% of data goes to training set
 					testWriter.write(sCurrentLine);
 					testWriter.newLine();
 				}
