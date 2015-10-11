@@ -23,9 +23,10 @@ public class RBFNode {
     public double calculateActivation(ArrayList<Double> x, double var){//TODO make decision about variance matrix
         //System.out.println("input = " + x + ", means = " + means);
         double variance = 1/(2*Math.pow(var, 2));
-        System.out.println("V: " + variance);
+        //System.out.println();
         double error = Math.pow(dist.calculateDistance(x, means, 2),2);
-        System.out.println("E: " + error);
+        //System.out.println("V: " + variance + ", E: " + error);
+        //System.out.println("exp(variance*error): " + Math.exp(variance*error));
         return Math.exp(variance*error);
     }
     
