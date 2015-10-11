@@ -1,6 +1,7 @@
 package runmodels;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
@@ -107,14 +108,14 @@ public class KernelANN {
         }
         return count2;
     }
-    public double calculateTotalError(ArrayList target, ArrayList out){
+    private double calculateTotalError(ArrayList target, ArrayList out){
         return dist.calculateDistance(target, out, 1);
     }
-    public double calcError(ArrayList target, ArrayList out) {
+    private double calcError(ArrayList target, ArrayList out) {
         return dist.calculateDistance(target, out, 1);
     }
 
-    public double calcError(double target, double out) {
+    private double calcError(double target, double out) {
         return dist.calculateDistance(target, out);
     }
 
@@ -129,13 +130,13 @@ public class KernelANN {
         variance = var;
     }
 
-    public double updateIndWeight(double inweight, double input, double target, double observed) {
+    private double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
         outweight += (target - observed) * eta * input;//multiply this by input
         return outweight;
     }
 
-    public void updateAllWeights(double target, double output, double input) {
+    private void updateAllWeights(double target, double output, double input) {
         double x = 0;
         for (int i = 0; i < functions.size(); i++) {//for each hidden node
             for (int j = 0; j < 1; j++) {
@@ -147,7 +148,7 @@ public class KernelANN {
         }
     }
 
-    public double generateOutputs() {
+    private double generateOutputs() {
         double sum = 0;
         for (int i = 0; i < 1; i++) {
             //for each output node calculate weighted sum of hidden layers
@@ -158,12 +159,59 @@ public class KernelANN {
         return sum;
     }
 
-    public void revertWeights() {
+    private void revertWeights() {
         //System.out.println("Weights reverted");
         for (int i = 0; i < functions.size(); i++) {
             for (int j = 0; j < 1; j++) {
                 functions.get(i).outweights.set(j, functions.get(i).oldweights.get(j));
             }
+        }
+    }
+    
+    public double testSingleInput(ArrayList input){
+        double stuff = 0;
+        double otherStuff = 0;
+        for(int i = 0; i < functions.size(); i++){
+            stuff = functions.get(i).calculateActivation(input, variance, dim2);
+            otherStuff += stuff*functions.get(i).outweights.get(0);
+        }
+        return otherStuff;
+    }
+    public void testNetwork(String testData){
+        BufferedReader br = null;//read from data
+        BufferedWriter bw = null;
+        String line = "";
+        String cvsSplitBy = ",";
+        ArrayList<ArrayList> input = new ArrayList();//list of examples in data set
+        ArrayList<Double> targetOut = new ArrayList<Double>();
+        int testLen = 0;
+        int count = 0;
+        try {
+            br = new BufferedReader(new FileReader(testData));
+            while ((line = br.readLine()) != null) {
+                String[] example = line.split(cvsSplitBy);
+                input.add(new ArrayList());
+                for (int i = 0; i < dim2; i++) {
+                    int x = Integer.parseInt(example[i]);//change input to integers
+                    input.get(count).add(x);//add each dimension to list
+                }
+                double x = Double.parseDouble(example[dim2]);//add each output to the target
+                targetOut.add(x);
+                count++;
+            }
+            testLen = count;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        try{
+            //String outputFile = 
+            for(int i = 0; i < testLen; i++){
+                double out = testSingleInput(input.get(i));
+                double error = calcError(targetOut.get(i), out);
+                
+            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 }
