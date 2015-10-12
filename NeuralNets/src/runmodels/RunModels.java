@@ -8,6 +8,7 @@ package runmodels;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
+import java.util.*;
 
 /**
  *
@@ -20,6 +21,8 @@ public class RunModels {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		String outputName = "";
 
 		// gets the os for the computer this program is run on
 		String os = System.getProperty("os.name").toLowerCase();
@@ -28,18 +31,22 @@ public class RunModels {
 		// starts building the file path
 		String filePathTrain = home;		
 		String filePathTest = home;
+		String filePathOutput = home;
 		
 		// uses file separator so is operating system agnostic
 		if (os.startsWith("windows")) { // Windows
 			filePathTrain += File.separator;		
 			filePathTest += File.separator;
+			filePathOutput += File.separator;
 		} else if (os.startsWith("mac")) { // Mac
 			filePathTrain += File.separator;
 			filePathTest += File.separator;
+			filePathOutput += File.separator;			
 		} else {
 			// everything else
 			filePathTrain += File.separator;
 			filePathTest += File.separator;
+			filePathOutput += File.separator;
 		}
 
 		// calls the file chooser, returns the updated file path
@@ -49,52 +56,59 @@ public class RunModels {
 		System.out.println("Select Test Data Location");
 		filePathTest = callFileChooser(filePathTest);
 		System.out.println("Test Data: " + filePathTest);
+		System.out.println("Enter the name of your output file >" );
+		outputName = in.nextLine();
+		filePathOutput = ("Select Desired Output Location");
+		filePathOutput = callFileChooser(filePathOutput);
+		filePathOutput += File.separator + outputName + ".txt";		
+		System.out.println("Output Data: " + filePathOutput);
 
 		// updates filepath with trailing separator
 		filePathTrain += File.separator;
 		filePathTest += File.separator;
+		filePathOutput += File.separator;
 
-		
+	
 		//Tests the Kernel ANN (RBF)
 		for (int i = 0; i < 1; i++) {
 			//for a network of size 2
 			KernelANN x2 = new KernelANN();
 			String name2train = filePathTrain;
 			String name2test = filePathTest;
-			int iter2 = x2.trainNetwork(name2train, 10, 10, 120);
+			String output = filePathOutput;
+			
+			int iter2 = x2.trainNetwork(name2train, 10, 10, 120, output);
 			System.out.println("i: " + i + ", iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
 			
 			//for a network of size 3
 //			KernelANN x3 = new KernelANN();
 //			String name3train = filePathTrain;
 //			String name3test = 	filePathTest;		
-//			int iter3 = x3.trainNetwork(name3train, 10, 10, 120);
+//			int iter3 = x3.trainNetwork(name3train, 10, 10, 120, output);
 //			System.out.println("i: " + i + ", iterations: " + iter3 + ", Finished! Error: " + x3.oldError);
 			
 			//for a network of size 4
 //			KernelANN x4 = new KernelANN();
 //			String name4train = filePathTrain;
 //			String name4test = filePathTest;			
-//			int iter4 = x4.trainNetwork(name4train, 10, 10, 120);
+//			int iter4 = x4.trainNetwork(name4train, 10, 10, 120, output);
 //			System.out.println("i: " + i + ", iterations: " + iter4 + ", Finished! Error: " + x4.oldError);
 			
 			//for a network of size 5
 //			KernelANN x5 = new KernelANN();
 //			String name5train = filePathTrain;
 //			String name5test = filePathTest;
-//			int iter5 = x5.trainNetwork(name5train, 10, 10, 120);
+//			int iter5 = x5.trainNetwork(name5train, 10, 10, 120, output);
 //			System.out.println("i: " + i + ", iterations: " + iter5 + ", Finished! Error: " + x5.oldError);
 			
 			//for a network of size 6
 //			KernelANN x6 = new KernelANN();
 //			String name6train = filePathTrain;
 //			String name6test = filePathTest;			
-//			int iter6 = x6.trainNetwork(name6train, 10, 10, 120);
+//			int iter6 = x6.trainNetwork(name6train, 10, 10, 120, output);
 //			System.out.println("i: " + i + ", iterations: " + iter6 + ", Finished! Error: " + x6.oldError);
 				
 		} //end for
-		
-
 	}
 
 	public static String callFileChooser(String filePath) {
