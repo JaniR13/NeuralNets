@@ -59,6 +59,7 @@ public class KernelANN {
                 count++;
             }
             datasize = count;//set the datasize so we know where to count to
+            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,6 +103,7 @@ public class KernelANN {
                 bw = new BufferedWriter(new FileWriter(outputFile));
                 bw.append("\n");
                 bw.append("Iteration: " + count2 + ", Total Error: " + oldError);
+                bw.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -204,6 +206,7 @@ public class KernelANN {
                 count++;
             }
             testLen = count;
+            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,6 +222,7 @@ public class KernelANN {
                 bw.write(input.get(i) + ", " + out + ", " + error);
 
             }
+            bw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
