@@ -92,6 +92,8 @@ import java.util.ArrayList;
 		protected void train() {
 			generateOutput();
 			
+			print();
+			
 			while (!testTerminationCriterion()) {
 
 				// below here is actual backprop
@@ -249,7 +251,8 @@ import java.util.ArrayList;
 				ArrayList<Neuron> newLayer = new ArrayList<Neuron>();
 				for (int n = 0; n < numHiddenNodesPerLayer; n++) {
 					Neuron node;
-					if (l == 1) {
+					// TODO: put a thing here
+					if (l == 1 ) {
 						// first hidden layer already includes bias in the number of
 						// inputs
 						node = new Neuron(f, l, n, nodes.get(l - 1).size());
@@ -266,8 +269,14 @@ import java.util.ArrayList;
 			ArrayList<Neuron> outputNodes = new ArrayList<Neuron>();
 			for (int n = 0; n < numOutputs; n++) {
 				// .size()+1 is because of bias node
-				Neuron node = new Neuron(f, layers - 1, n, nodes.get(layers - 2)
+				Neuron node;
+				if (layers > 2){
+					node = new Neuron(f, layers - 1, n, nodes.get(layers - 2)
 						.size() + 1);
+				} else {
+					node = new Neuron(f, layers - 1, n, nodes.get(layers - 2)
+							.size());
+				}
 				node.setOutputNode(true);
 				outputNodes.add(node);
 			}
