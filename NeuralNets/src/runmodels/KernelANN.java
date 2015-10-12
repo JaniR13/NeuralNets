@@ -65,9 +65,9 @@ public class KernelANN {
         return input;
     }
 
-    public int trainNetwork(String fname, double var, int k, double threshold) {
+    public int trainNetwork(String fname, double var, int k, double threshold, String outputFile) {
         BufferedWriter bw = null;
-        String outputFile= "";
+        //String outputFile = "";
         ArrayList<ArrayList> input = readData(fname);//initialize data
         kMeansClustering(k, input, datasize, var);//use input to cluster data
         oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
@@ -89,7 +89,7 @@ public class KernelANN {
                 outputs.set(i, newOut);
                 newError = calculateTotalError(targets, outputs);
                 if (newError <= oldError) {
-                    
+
                     oldError = newError;
                 } else {
                     outputs.set(i, oldOut);
@@ -98,20 +98,22 @@ public class KernelANN {
                 }
             }
             count2++;
-            try{
-            bw = new BufferedWriter(new FileWriter(outputFile));
-            bw.append("\n");
-            bw.append("Iteration: " + count2 + ", Total Error: " + oldError);
-            }catch(Exception e){
+            try {
+                bw = new BufferedWriter(new FileWriter(outputFile));
+                bw.append("\n");
+                bw.append("Iteration: " + count2 + ", Total Error: " + oldError);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             System.out.println("Iteration: " + count2 + ", Total Error: " + oldError);
         }
         return count2;
     }
-    private double calculateTotalError(ArrayList target, ArrayList out){
+
+    private double calculateTotalError(ArrayList target, ArrayList out) {
         return dist.calculateDistance(target, out, 1);
     }
+
     private double calcError(ArrayList target, ArrayList out) {
         return dist.calculateDistance(target, out, 1);
     }
@@ -168,17 +170,18 @@ public class KernelANN {
             }
         }
     }
-    
-    public double testSingleInput(ArrayList input){
+
+    public double testSingleInput(ArrayList input) {
         double stuff = 0;
         double otherStuff = 0;
-        for(int i = 0; i < functions.size(); i++){
+        for (int i = 0; i < functions.size(); i++) {
             stuff = functions.get(i).calculateActivation(input, variance, dim2);
-            otherStuff += stuff*functions.get(i).outweights.get(0);
+            otherStuff += stuff * functions.get(i).outweights.get(0);
         }
         return otherStuff;
     }
-    public void testNetwork(String testData){
+
+    public void testNetwork(String testData, String outputFile) {
         BufferedReader br = null;//read from data
         BufferedWriter bw = null;
         String line = "";
@@ -201,22 +204,22 @@ public class KernelANN {
                 count++;
             }
             testLen = count;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try{
-            String outputFile = "";
+        try {
+            //String outputFile = "";
             bw = new BufferedWriter(new FileWriter(outputFile));
             bw.newLine();
             bw.write("input array, output, error");
-            for(int i = 0; i < testLen; i++){
+            for (int i = 0; i < testLen; i++) {
                 bw.newLine();
                 double out = testSingleInput(input.get(i));
                 double error = calcError(targetOut.get(i), out);
-                bw.write(input.get(i) + ", " + out+ ", " + error);
-                
+                bw.write(input.get(i) + ", " + out + ", " + error);
+
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
