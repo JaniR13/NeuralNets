@@ -87,13 +87,13 @@ public class KernelANN {
                 double newOut = generateOutputs();//generate the output for the training example
                 updateAllWeights(targets.get(i), newOut, sum);//update all the weights using the new output
                 outputs.set(i, newOut);
-                newError = calculateTotalError(targets, outputs);
+                newError = calculateTotalError(targets, outputs)/datasize;
                 if (newError <= oldError) {
 
                     oldError = newError;
                 } else {
                     outputs.set(i, oldOut);
-                    oldError = calculateTotalError(targets, outputs);
+                    oldError = calculateTotalError(targets, outputs)/datasize;
                     revertWeights();
                 }
             }
