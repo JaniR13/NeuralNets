@@ -61,14 +61,12 @@ public class RunModels {
 		filePathOutput = ("Select Desired Output Location");
 		filePathOutput = callFileChooser(filePathOutput);
 		filePathOutput += File.separator + outputName + ".txt";		
-		System.out.println("Output Data: " + filePathOutput);
 
 		// updates filepath with trailing separator
 		filePathTrain += File.separator;
 		filePathTest += File.separator;
 		filePathOutput += File.separator;
 
-	
 		//Tests the Kernel ANN (RBF)
 		for (int i = 0; i < 1; i++) {
 			//for a network of size 2
