@@ -8,6 +8,9 @@ import java.util.ArrayList;
 		private int layers;
 		private int numOutputs;
 		private int numHiddenNodesPerLayer;
+		
+		// TODO: normalize data
+		
 		private ArrayList<Double> outputs;
 		private ArrayList<ArrayList<Neuron>> nodes;
 		private ArrayList<Double> inputs;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 
 		private double eta = .4;
 		private boolean momentum;
-		private double alpha = .6;
+		private double alpha = .4;
 		private double epsilon = .00001;
 
 		/**
@@ -87,12 +90,25 @@ import java.util.ArrayList;
 				System.out.println(outputs.get(i));
 			}
 			System.out.println();
+			
+			calcNetworkError();
+		}
+		
+		/** Calculates mean squared error of network */
+		public double calcNetworkError(){
+			Double sum = 0.0;
+			for (int i = 0; i < numOutputs; i++){
+				sum += ((targetOutputs.get(i) - outputs.get(i)) * (targetOutputs.get(i) - outputs.get(i)));
+			}
+			return sum/2;
 		}
 
-		protected void train() {
+		protected ArrayList<Double> train() {
 			generateOutput();
 			
 			print();
+			
+			int count = 0;
 			
 			while (!testTerminationCriterion()) {
 
@@ -165,7 +181,13 @@ import java.util.ArrayList;
 					}
 				}
 				generateOutput();
+				count++;
+				if (count > 10000000){
+					System.out.println("++++++++++++ Didn't converge ++++++++++++");
+					break;
+				}
 			} 
+			return outputs;
 		}
 
 		/** Calculates weight change for a hidden node */
@@ -330,6 +352,14 @@ import java.util.ArrayList;
 				System.out.println();
 			}
 			System.out.println();
+		}
+		
+		public void setInputs(ArrayList<Double> newInputs){
+			this.inputs = newInputs;
+		}
+		
+		public void setTargetOutputs(ArrayList<Double> newOutputs){
+			this.targetOutputs = newOutputs;
 		}
 
 	}
