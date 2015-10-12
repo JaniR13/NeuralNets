@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Arrays;
 
 public class FeedForwardExperiment {
 
@@ -63,17 +64,301 @@ public class FeedForwardExperiment {
 	ArrayList<Double> fivederrors = new ArrayList<Double>();
 	ArrayList<Double> sixderrors = new ArrayList<Double>();
 
-	public FeedForwardExperiment() {
+	public FeedForwardExperiment(String filePathTrain, String filePathTest) {
 		// TODO: feed all six training sets into trainExamplesFromFile
+		trainExamplesFromFile(filePathTrain);
 		
 		// TODO: feed all six test sets into testExamplesFromFile
-		// TODO: output error values to file
-		// TODO: also keep errors in something local (arraylist?) so we can find average
+		testExamplesFromFile(filePathTest);
+		
+		// TODO: normalizeTestOutputs();
+		// TODO: normalizeTrainOutputs();
+		
+		// TODO: create training nets
+		
+		// TODO: run test instances
 		
 		// TODO: print average of errors for each ArrayList of errors
 		
 	}
+	
+	private void runTestInstances(){
+		Random networkPicker = new Random();
+		
+		//runs through each test example
+		for (int i = 0; i < twodtestinputs.size(); i++){
+			int index = networkPicker.nextInt(twodnets.size());
+			FeedForwardANN testNet = twodnets.get(index);
+			// runs with this test example's inputs and outputs
+			testNet.setInputs(twodtestinputs.get(i));
+			testNet.setTargetOutputs(twodtestoutputs.get(i));
+			testNet.train();
+			// adds error to appropriate arraylist
+			twoderrors.add(testNet.calcNetworkError());
+		}
+		
+		//runs through each test example
+		for (int i = 0; i < threedtestinputs.size(); i++){
+			int index = networkPicker.nextInt(threednets.size());
+			FeedForwardANN testNet = threednets.get(index);
+			// runs with this test example's inputs and outputs
+			testNet.setInputs(threedtestinputs.get(i));
+			testNet.setTargetOutputs(threedtestoutputs.get(i));
+			testNet.train();
+			// adds error to appropriate arraylist
+			threederrors.add(testNet.calcNetworkError());
+		}
+		
+		//runs through each test example
+		for (int i = 0; i < fourdtestinputs.size(); i++){
+			int index = networkPicker.nextInt(fourdnets.size());
+			FeedForwardANN testNet = fourdnets.get(index);
+			// runs with this test example's inputs and outputs
+			testNet.setInputs(fourdtestinputs.get(i));
+			testNet.setTargetOutputs(fourdtestoutputs.get(i));
+			testNet.train();
+			// adds error to appropriate arraylist
+			fourderrors.add(testNet.calcNetworkError());
+		}
+		
+		//runs through each test example
+		for (int i = 0; i < fivedtestinputs.size(); i++){
+			int index = networkPicker.nextInt(fivednets.size());
+			FeedForwardANN testNet = fivednets.get(index);
+			// runs with this test example's inputs and outputs
+			testNet.setInputs(fivedtestinputs.get(i));
+			testNet.setTargetOutputs(fivedtestoutputs.get(i));
+			testNet.train();
+			// adds error to appropriate arraylist
+			fivederrors.add(testNet.calcNetworkError());
+		}
+		
+		//runs through each test example
+		for (int i = 0; i < sixdtestinputs.size(); i++){
+			int index = networkPicker.nextInt(sixdnets.size());
+			FeedForwardANN testNet = sixdnets.get(index);
+			// runs with this test example's inputs and outputs
+			testNet.setInputs(sixdtestinputs.get(i));
+			testNet.setTargetOutputs(sixdtestoutputs.get(i));
+			testNet.train();
+			// adds error to appropriate arraylist
+			sixderrors.add(testNet.calcNetworkError());
+		}
+	}
+	
+	private void createTrainingNets(){
+		//runs through each training example
+		for (int i = 0; i < twodtraininputs.size(); i++){
+			// creates new ANN
+			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, twodtraininputs.get(i), twodtrainoutputs.get(i), true, false);
+			// trains net
+			newNet.train();
+			// adds net to appropriate group
+			twodnets.add(newNet);
+		}
+		
+		for (int i = 0; i < threedtraininputs.size(); i++){
+			// creates new ANN
+			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, threedtraininputs.get(i), threedtrainoutputs.get(i), true, false);
+			// trains net
+			newNet.train();
+			// adds net to appropriate group
+			threednets.add(newNet);
+		}
+		
+		for (int i = 0; i < fourdtraininputs.size(); i++){
+			// creates new ANN
+			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, fourdtraininputs.get(i), fourdtrainoutputs.get(i), true, false);
+			// trains net
+			newNet.train();
+			// adds net to appropriate group
+			fourdnets.add(newNet);
+		}
+		
+		for (int i = 0; i < fivedtraininputs.size(); i++){
+			// creates new ANN
+			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, fivedtraininputs.get(i), fivedtrainoutputs.get(i), true, false);
+			// trains net
+			newNet.train();
+			// adds net to appropriate group
+			fivednets.add(newNet);
+		}
+		
+		for (int i = 0; i < sixdtraininputs.size(); i++){
+			// creates new ANN
+			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, sixdtraininputs.get(i), sixdtrainoutputs.get(i), true, false);
+			// trains net
+			newNet.train();
+			// adds net to appropriate group
+			sixdnets.add(newNet);
+		}
+	}
 
+	
+	private void normalizeTestOutputs(){
+		Double[] twodcopy = new Double[twodtestoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : twodtestoutputs){
+			twodcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(twodcopy);
+		// gets max and min
+		Double max = twodcopy[twodcopy.length-1];
+		Double min = twodcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: twodtestoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] threedcopy = new Double[threedtestoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : threedtestoutputs){
+			threedcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(threedcopy);
+		// gets max and min
+		max = threedcopy[threedcopy.length-1];
+		min = threedcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: threedtestoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] fourdcopy = new Double[fourdtestoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : fourdtestoutputs){
+			fourdcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(fourdcopy);
+		// gets max and min
+		max = fourdcopy[fourdcopy.length-1];
+		min = fourdcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: fourdtestoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] fivedcopy = new Double[fivedtestoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : fivedtestoutputs){
+			fivedcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(fivedcopy);
+		// gets max and min
+		max = fivedcopy[fivedcopy.length-1];
+		min = fivedcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: fivedtestoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] sixdcopy = new Double[sixdtestoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : sixdtestoutputs){
+			sixdcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(sixdcopy);
+		// gets max and min
+		max = sixdcopy[sixdcopy.length-1];
+		min = sixdcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: sixdtestoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+	}
+	
+	private void normalizeTrainOutputs(){
+		Double[] twodcopy = new Double[twodtrainoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : twodtrainoutputs){
+			twodcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(twodcopy);
+		// gets max and min
+		Double max = twodcopy[twodcopy.length-1];
+		Double min = twodcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: twodtrainoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] threedcopy = new Double[threedtrainoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : threedtrainoutputs){
+			threedcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(threedcopy);
+		// gets max and min
+		max = threedcopy[threedcopy.length-1];
+		min = threedcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: threedtrainoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] fourdcopy = new Double[fourdtrainoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : fourdtrainoutputs){
+			fourdcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(fourdcopy);
+		// gets max and min
+		max = fourdcopy[fourdcopy.length-1];
+		min = fourdcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: fourdtrainoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] fivedcopy = new Double[fivedtrainoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : fivedtrainoutputs){
+			fivedcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(fivedcopy);
+		// gets max and min
+		max = fivedcopy[fivedcopy.length-1];
+		min = fivedcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: fivedtrainoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+		
+		Double[] sixdcopy = new Double[sixdtrainoutputs.size()];
+		// adds all outputs to a new arraylist
+		for (ArrayList<Double> a : sixdtrainoutputs){
+			sixdcopy[0] = (a.get(0));
+		}
+		// sorts new arraylist
+		Arrays.sort(sixdcopy);
+		// gets max and min
+		max = sixdcopy[sixdcopy.length-1];
+		min = sixdcopy[0];
+		// normalizes each output
+		for(ArrayList<Double> a: sixdtrainoutputs){
+			Double newval = (a.get(0) - min)/(max-min);
+			a.set(0, newval);
+		}
+	}
+	
 	private void trainExamplesFromFile(String fname) {
 		BufferedReader br = null; // read from data
 		String line = "";
@@ -83,10 +368,12 @@ public class FeedForwardExperiment {
 
 		try {
 			br = new BufferedReader(new FileReader(fname));
-			while ((line = br.readLine()) != null) {
+			while ((br.readLine()) != null) {
 				line = br.readLine();
+				System.out.println(line);
 				String[] example = line.split(cvsSplitBy);
-
+				
+				
 				// adds inputs (all but last number on line)
 				for (int i = 0; i < example.length - 1; i++) {
 					Double in = Double.parseDouble(example[i]);
@@ -95,53 +382,28 @@ public class FeedForwardExperiment {
 
 				// puts input array into correctly-sized ArrayList of examples
 				int size = inputs.size();
-				if (size == 2) {
-					twodtraininputs.add(inputs);
-				} else if (size == 3) {
-					threedtraininputs.add(inputs);
-				} else if (size == 4) {
-					fourdtraininputs.add(inputs);
-				} else if (size == 5) {
-					fivedtraininputs.add(inputs);
-				} else if (size == 6) {
-					sixdtraininputs.add(inputs);
-				}
-
+				
 				// gets output
 				String stringoutput = example[example.length - 1];
 				Double o = Double.parseDouble(stringoutput);
 				ArrayList<Double> output = new ArrayList<Double>();
 				output.add(o);
-
-				// adds output to corresponding output ArrayList
-				// then initializes and trains a new feed forward net with 
-				// corresponding inputs and outputs
-				// then stores new net
+				
 				if (size == 2) {
+					twodtraininputs.add(inputs);
 					twodtrainoutputs.add(output);
-					FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, inputs, output, true, false);
-					ArrayList<Double> netOutputs = newNet.train();
-					twodnets.add(newNet);
 				} else if (size == 3) {
+					threedtraininputs.add(inputs);
 					threedtrainoutputs.add(output);
-					FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, inputs, output, true, false);
-					ArrayList<Double> netOutputs = newNet.train();
-					threednets.add(newNet);
 				} else if (size == 4) {
+					fourdtraininputs.add(inputs);
 					fourdtrainoutputs.add(output);
-					FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, inputs, output, true, false);
-					ArrayList<Double> netOutputs = newNet.train();
-					fourdnets.add(newNet);
 				} else if (size == 5) {
+					fivedtraininputs.add(inputs);
 					fivedtrainoutputs.add(output);
-					FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, inputs, output, true, false);
-					ArrayList<Double> netOutputs = newNet.train();
-					fivednets.add(newNet);
 				} else if (size == 6) {
+					sixdtraininputs.add(inputs);
 					sixdtrainoutputs.add(output);
-					FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, inputs, output, true, false);
-					ArrayList<Double> netOutputs = newNet.train();
-					sixdnets.add(newNet);
 				}
 			}
 
@@ -169,81 +431,32 @@ public class FeedForwardExperiment {
 					inputs.add(in);
 				}
 
-				// puts input array into correctly-sized ArrayList of examples
-				int size = inputs.size();
-				if (size == 2) {
-					twodtestinputs.add(inputs);
-				} else if (size == 3) {
-					threedtestinputs.add(inputs);
-				} else if (size == 4) {
-					fourdtestinputs.add(inputs);
-				} else if (size == 5) {
-					fivedtestinputs.add(inputs);
-				} else if (size == 6) {
-					sixdtestinputs.add(inputs);
-				}
-
 				// gets output
 				String stringoutput = example[example.length - 1];
 				Double o = Double.parseDouble(stringoutput);
 				ArrayList<Double> output = new ArrayList<Double>();
 				output.add(o);
-
-				Random networkPicker = new Random();
-				// select a random network from appropriately sized set
-				// and then give it a new set of inputs and outputs (associated w/ test example)
-				// and get the error
+				
+				// puts input array into correctly-sized ArrayList of examples
+				int size = inputs.size();
+				
 				if (size == 2) {
-					int index = networkPicker.nextInt(twodnets.size());
+					twodtestinputs.add(inputs);
 					twodtestoutputs.add(output);
-					FeedForwardANN testNet = twodnets.get(index);
-					testNet.setInputs(inputs);
-					testNet.setTargetOutputs(output);
-					testNet.train();
-					// TODO: write error to file
-					Double error = testNet.calcNetworkError();
-					twoderrors.add(error);
 				} else if (size == 3) {
-					int index = networkPicker.nextInt(threednets.size());
+					threedtestinputs.add(inputs);
 					threedtestoutputs.add(output);
-					FeedForwardANN testNet = threednets.get(index);
-					testNet.setInputs(inputs);
-					testNet.setTargetOutputs(output);
-					testNet.train();
-					// TODO: write error to file
-					Double error = testNet.calcNetworkError();
-					threederrors.add(error);
 				} else if (size == 4) {
-					int index = networkPicker.nextInt(fourdnets.size());
+					fourdtestinputs.add(inputs);
 					fourdtestoutputs.add(output);
-					FeedForwardANN testNet = fourdnets.get(index);
-					testNet.setInputs(inputs);
-					testNet.setTargetOutputs(output);
-					testNet.train();
-					// TODO: write error to file
-					Double error = testNet.calcNetworkError();
-					fourderrors.add(error);
 				} else if (size == 5) {
-					int index = networkPicker.nextInt(fivednets.size());
+					fivedtestinputs.add(inputs);
 					fivedtestoutputs.add(output);
-					FeedForwardANN testNet = fivednets.get(index);
-					testNet.setInputs(inputs);
-					testNet.setTargetOutputs(output);
-					testNet.train();
-					// TODO: write error to file
-					Double error = testNet.calcNetworkError();
-					fivederrors.add(error);
 				} else if (size == 6) {
-					int index = networkPicker.nextInt(sixdnets.size());
+					sixdtestinputs.add(inputs);
 					sixdtestoutputs.add(output);
-					FeedForwardANN testNet = sixdnets.get(index);
-					testNet.setInputs(inputs);
-					testNet.setTargetOutputs(output);
-					testNet.train();
-					// TODO: write error to file
-					Double error = testNet.calcNetworkError();
-					sixderrors.add(error);
 				}
+
 			}
 
 		} catch (Exception e) {
