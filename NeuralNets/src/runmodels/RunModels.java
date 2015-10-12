@@ -22,7 +22,6 @@ public class RunModels {
 	 */
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
-		String outputName = "";
 
 		// gets the os for the computer this program is run on
 		String os = System.getProperty("os.name").toLowerCase();
@@ -31,22 +30,28 @@ public class RunModels {
 		// starts building the file path
 		String filePathTrain = home;		
 		String filePathTest = home;
-		String filePathOutput = home;
+		String filePathOutputTrain = home;
+		String filePathOutputTest = home;
+		String outputNameTrain;
+		String outputNameTest;
 		
 		// uses file separator so is operating system agnostic
 		if (os.startsWith("windows")) { // Windows
 			filePathTrain += File.separator;		
 			filePathTest += File.separator;
-			filePathOutput += File.separator;
+			filePathOutputTrain += File.separator;
+			filePathOutputTest += File.separator;			
 		} else if (os.startsWith("mac")) { // Mac
 			filePathTrain += File.separator;
 			filePathTest += File.separator;
-			filePathOutput += File.separator;			
+			filePathOutputTrain += File.separator;
+			filePathOutputTest += File.separator;			
 		} else {
 			// everything else
 			filePathTrain += File.separator;
 			filePathTest += File.separator;
-			filePathOutput += File.separator;
+			filePathOutputTrain += File.separator;
+			filePathOutputTest += File.separator;			
 		}
 
 		// calls the file chooser, returns the updated file path
@@ -56,26 +61,32 @@ public class RunModels {
 		System.out.println("Select Test Data Location");
 		filePathTest = callFileChooser(filePathTest);
 		System.out.println("Test Data: " + filePathTest);
-		System.out.println("Enter the name of your output file >" );
-		outputName = in.nextLine();
-		filePathOutput = ("Select Desired Output Location");
-		filePathOutput = callFileChooser(filePathOutput);
-		filePathOutput += File.separator + outputName + ".txt";		
-
+		System.out.println("Enter the name of your output file for training >" );
+		outputNameTrain = in.nextLine();
+		System.out.println("Enter the name of your output file for testing >" );
+		outputNameTest = in.nextLine();		
+		filePathOutputTrain = ("Select Desired Output Location");
+		filePathOutputTrain = callFileChooser(filePathOutputTrain);
+		filePathOutputTest = filePathOutputTrain;
+		filePathOutputTrain += File.separator + outputNameTrain + ".txt";	
+		filePathOutputTest += File.separator + outputNameTest + ".txt";
+		
 		// updates filepath with trailing separator
 		filePathTrain += File.separator;
 		filePathTest += File.separator;
-		filePathOutput += File.separator;
-
+		filePathOutputTrain += File.separator;
+		filePathOutputTest += File.separator;
+		
 		//Tests the Kernel ANN (RBF)
 		for (int i = 0; i < 1; i++) {
 			//for a network of size 2
 			KernelANN x2 = new KernelANN();
 			String name2train = filePathTrain;
 			String name2test = filePathTest;
-			String output = filePathOutput;
+			String outputTrain = filePathOutputTrain;
+			String outputTest = filePathOutputTest;
 			
-			int iter2 = x2.trainNetwork(name2train, 10, 10, 120, output);
+			int iter2 = x2.trainNetwork(name2train, 10, 10, 120, outputTrain);
 			System.out.println("i: " + i + ", iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
 			
 			//for a network of size 3
