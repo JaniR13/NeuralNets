@@ -55,6 +55,7 @@ public class RunModels {
 		filePathTest += File.separator;
 
 		
+		//Tests the Kernel ANN (RBF)
 		for (int i = 0; i < 1; i++) {
 			//for a network of size 2
 			KernelANN x2 = new KernelANN();
