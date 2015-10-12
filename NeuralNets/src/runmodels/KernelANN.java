@@ -214,12 +214,12 @@ public class KernelANN {
             //String outputFile = "";
             bw = new BufferedWriter(new FileWriter(outputFile));
             bw.newLine();
-            bw.write("input array, output, error");
+            bw.write("input array, output, target, error");
             for (int i = 0; i < testLen; i++) {
                 bw.newLine();
                 double out = testSingleInput(input.get(i));
                 double error = calcError(targetOut.get(i), out);
-                bw.write(input.get(i) + ", " + out + ", " + error);
+                bw.write(input.get(i) + ", " + out + ", " + targetOut.get(i)+", " + error);
 
             }
             bw.close();
