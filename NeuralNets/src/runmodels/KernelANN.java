@@ -3,6 +3,7 @@ package runmodels;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -65,6 +66,8 @@ public class KernelANN {
     }
 
     public int trainNetwork(String fname, double var, int k, double threshold) {
+        BufferedWriter bw = null;
+        String outputFile= "";
         ArrayList<ArrayList> input = readData(fname);//initialize data
         kMeansClustering(k, input, datasize, var);//use input to cluster data
         oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
@@ -80,15 +83,11 @@ public class KernelANN {
                     int n = (int) input.get(i).get(d);
                     sum += n;
                 }
-                //System.out.println(sum);
-                //System.out.println(input.get(i));
                 double oldOut = outputs.get(i);
                 double newOut = generateOutputs();//generate the output for the training example
                 updateAllWeights(targets.get(i), newOut, sum);//update all the weights using the new output
-               //System.out.println(newOut);
                 outputs.set(i, newOut);
                 newError = calculateTotalError(targets, outputs);
-                //System.out.println("New Error: " + newError + ", Old Error: " + oldError);
                 if (newError <= oldError) {
                     
                     oldError = newError;
@@ -97,13 +96,15 @@ public class KernelANN {
                     oldError = calculateTotalError(targets, outputs);
                     revertWeights();
                 }
-                //System.out.println("Iteration: " + count2 + ", Total Error: " + totalError);
             }
-            //totalError = calculateTotalError(targets, outputs);
             count2++;
-            //System.out.println(outputs.size());
-            //System.out.println(outputs);
-            //System.out.println(targets);
+            try{
+            bw = new BufferedWriter(new FileWriter(outputFile));
+            bw.append("\n");
+            bw.append("Iteration: " + count2 + ", Total Error: " + oldError);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             System.out.println("Iteration: " + count2 + ", Total Error: " + oldError);
         }
         return count2;
@@ -204,10 +205,15 @@ public class KernelANN {
             e.printStackTrace();
         }
         try{
-            //String outputFile = 
+            String outputFile = "";
+            bw = new BufferedWriter(new FileWriter(outputFile));
+            bw.newLine();
+            bw.write("input array, output, error");
             for(int i = 0; i < testLen; i++){
+                bw.newLine();
                 double out = testSingleInput(input.get(i));
                 double error = calcError(targetOut.get(i), out);
+                bw.write(input.get(i) + ", " + out+ ", " + error);
                 
             }
         }catch(Exception e){
