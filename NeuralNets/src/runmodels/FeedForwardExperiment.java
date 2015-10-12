@@ -72,11 +72,16 @@ public class FeedForwardExperiment {
 		testExamplesFromFile(filePathTest);
 		
 		// TODO: normalizeTestOutputs();
+		normalizeTestOutputs();
+		
 		// TODO: normalizeTrainOutputs();
+		normalizeTrainOutputs();
 		
 		// TODO: create training nets
+		createTrainingNets();
 		
 		// TODO: run test instances
+		runTestInstances();
 		
 		// TODO: print average of errors for each ArrayList of errors
 		
@@ -197,9 +202,13 @@ public class FeedForwardExperiment {
 	
 	private void normalizeTestOutputs(){
 		Double[] twodcopy = new Double[twodtestoutputs.size()];
+
+		System.out.println("Array list size = " + twodtestoutputs.size());
+		System.out.println("Array size = " + twodcopy.length);
+		
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : twodtestoutputs){
-			twodcopy[0] = (a.get(0));
+		for (int i = 0; i < twodtestoutputs.size(); i++) {
+			twodcopy[i] = twodtestoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(twodcopy);
@@ -214,13 +223,16 @@ public class FeedForwardExperiment {
 		
 		Double[] threedcopy = new Double[threedtestoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : threedtestoutputs){
-			threedcopy[0] = (a.get(0));
+		for (int i = 0; i < threedtestoutputs.size(); i++) {
+			threedcopy[i] = threedtestoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(threedcopy);
+
 		// gets max and min
 		max = threedcopy[threedcopy.length-1];
+		System.out.println(max);
+		
 		min = threedcopy[0];
 		// normalizes each output
 		for(ArrayList<Double> a: threedtestoutputs){
@@ -230,8 +242,8 @@ public class FeedForwardExperiment {
 		
 		Double[] fourdcopy = new Double[fourdtestoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : fourdtestoutputs){
-			fourdcopy[0] = (a.get(0));
+		for (int i = 0; i < fourdtestoutputs.size(); i++) {
+			fourdcopy[i] = fourdtestoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(fourdcopy);
@@ -246,8 +258,8 @@ public class FeedForwardExperiment {
 		
 		Double[] fivedcopy = new Double[fivedtestoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : fivedtestoutputs){
-			fivedcopy[0] = (a.get(0));
+		for (int i = 0; i < fivedtestoutputs.size(); i++) {
+			fivedcopy[i] = fivedtestoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(fivedcopy);
@@ -262,8 +274,8 @@ public class FeedForwardExperiment {
 		
 		Double[] sixdcopy = new Double[sixdtestoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : sixdtestoutputs){
-			sixdcopy[0] = (a.get(0));
+		for (int i = 0; i < sixdtestoutputs.size(); i++) {
+			sixdcopy[i] = sixdtestoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(sixdcopy);
@@ -280,8 +292,8 @@ public class FeedForwardExperiment {
 	private void normalizeTrainOutputs(){
 		Double[] twodcopy = new Double[twodtrainoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : twodtrainoutputs){
-			twodcopy[0] = (a.get(0));
+		for (int i = 0; i < twodtrainoutputs.size(); i++) {
+			twodcopy[i] = twodtrainoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(twodcopy);
@@ -296,8 +308,8 @@ public class FeedForwardExperiment {
 		
 		Double[] threedcopy = new Double[threedtrainoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : threedtrainoutputs){
-			threedcopy[0] = (a.get(0));
+		for (int i = 0; i < threedtrainoutputs.size(); i++){
+			threedcopy[i] = (threedtrainoutputs.get(i).get(0));
 		}
 		// sorts new arraylist
 		Arrays.sort(threedcopy);
@@ -312,8 +324,8 @@ public class FeedForwardExperiment {
 		
 		Double[] fourdcopy = new Double[fourdtrainoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : fourdtrainoutputs){
-			fourdcopy[0] = (a.get(0));
+		for (int i = 0; i < fourdtrainoutputs.size(); i++){
+			fourdcopy[i] = fourdtrainoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(fourdcopy);
@@ -328,8 +340,8 @@ public class FeedForwardExperiment {
 		
 		Double[] fivedcopy = new Double[fivedtrainoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : fivedtrainoutputs){
-			fivedcopy[0] = (a.get(0));
+		for (int i = 0; i < fivedtrainoutputs.size(); i++){
+			fivedcopy[i] = fivedtrainoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(fivedcopy);
@@ -344,8 +356,8 @@ public class FeedForwardExperiment {
 		
 		Double[] sixdcopy = new Double[sixdtrainoutputs.size()];
 		// adds all outputs to a new arraylist
-		for (ArrayList<Double> a : sixdtrainoutputs){
-			sixdcopy[0] = (a.get(0));
+		for (int i = 0; i < sixdtrainoutputs.size(); i++) {
+			sixdcopy[i] = sixdtrainoutputs.get(i).get(0);
 		}
 		// sorts new arraylist
 		Arrays.sort(sixdcopy);
@@ -364,13 +376,11 @@ public class FeedForwardExperiment {
 		String line = "";
 		String cvsSplitBy = ",";
 
-		ArrayList<Double> inputs = new ArrayList<Double>();
-
 		try {
 			br = new BufferedReader(new FileReader(fname));
-			while ((br.readLine()) != null) {
-				line = br.readLine();
-				System.out.println(line);
+			
+			while ((line = br.readLine()) != null) {
+				ArrayList<Double> inputs = new ArrayList<Double>();
 				String[] example = line.split(cvsSplitBy);
 				
 				
@@ -410,6 +420,7 @@ public class FeedForwardExperiment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Done reading in training data");
 	}
 	
 	private void testExamplesFromFile(String fname){
@@ -417,12 +428,10 @@ public class FeedForwardExperiment {
 		String line = "";
 		String cvsSplitBy = ",";
 
-		ArrayList<Double> inputs = new ArrayList<Double>();
-
 		try {
 			br = new BufferedReader(new FileReader(fname));
 			while ((line = br.readLine()) != null) {
-				line = br.readLine();
+				ArrayList<Double> inputs = new ArrayList<Double>();
 				String[] example = line.split(cvsSplitBy);
 
 				// adds inputs (all but last number on line)
@@ -462,6 +471,7 @@ public class FeedForwardExperiment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Done reading in testing data");
 	}
 	
 
