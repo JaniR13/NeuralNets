@@ -77,41 +77,45 @@ public class RunModels {
         filePathOutputTest += File.separator;
 
 		//Tests the Kernel ANN (RBF)
-			//for a network of size 2
-        String name2train = filePathTrain;
-        String name2test = filePathTest;
+        
         String outputTrain = filePathOutputTrain;
         String outputTest = filePathOutputTest;
-        //for (int i = 0; i < 1; i++) {
-            KernelANN x2 = new KernelANN();
-            int iter2 = x2.trainNetwork(name2train, 10, 10, 1, outputTrain);
-            System.out.println("iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
-            x2.testNetwork(name2test, outputTest);
+        //for a network of size 2
+//        String name2train = filePathTrain;
+//        String name2test = filePathTest;
+//        KernelANN x2 = new KernelANN();
+//        int iter2 = x2.trainNetwork(name2train, 10, 10, 1, outputTrain);
+//        System.out.println("iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
+//        x2.testNetwork(name2test, outputTest);
 
-			//for a network of size 3
-//			KernelANN x3 = new KernelANN();
-//			String name3train = filePathTrain;
-//			String name3test = 	filePathTest;		
-//			int iter3 = x3.trainNetwork(name3train, 10, 10, 120, outputTrain);
-//			System.out.println("i: " + i + ", iterations: " + iter3 + ", Finished! Error: " + x3.oldError);
-			//for a network of size 4
+	//for a network of size 3
+        KernelANN x3 = new KernelANN();
+        String name3train = filePathTrain;
+        String name3test = filePathTest;
+        int iter3 = x3.trainNetwork(name3train, 10, 10, 1, outputTrain);
+        System.out.println("iterations: " + iter3 + ", Finished! Error: " + x3.oldError);
+        x3.testNetwork(name3test, outputTest);
+        //for a network of size 4
 //			KernelANN x4 = new KernelANN();
 //			String name4train = filePathTrain;
 //			String name4test = filePathTest;			
-//			int iter4 = x4.trainNetwork(name4train, 10, 10, 120, outputTrain);
-//			System.out.println("i: " + i + ", iterations: " + iter4 + ", Finished! Error: " + x4.oldError);
-			//for a network of size 5
+//			int iter4 = x4.trainNetwork(name4train, 10, 10, 1, outputTrain);
+//			System.out.println("iterations: " + iter4 + ", Finished! Error: " + x4.oldError);
+        //x4.testNetwork(name4test, outputTest);
+        //for a network of size 5
 //			KernelANN x5 = new KernelANN();
 //			String name5train = filePathTrain;
 //			String name5test = filePathTest;
-//			int iter5 = x5.trainNetwork(name5train, 10, 10, 120, outputTrain);
-//			System.out.println("i: " + i + ", iterations: " + iter5 + ", Finished! Error: " + x5.oldError);
-			//for a network of size 6
+//			int iter5 = x5.trainNetwork(name5train, 10, 10, 1, outputTrain);
+//			System.out.println("iterations: " + iter5 + ", Finished! Error: " + x5.oldError);
+        //x5.testNetwork(name5test, outputTest);
+        //for a network of size 6
 //			KernelANN x6 = new KernelANN();
 //			String name6train = filePathTrain;
 //			String name6test = filePathTest;			
-//			int iter6 = x6.trainNetwork(name6train, 10, 10, 120, outputTrain);
-//			System.out.println("i: " + i + ", iterations: " + iter6 + ", Finished! Error: " + x6.oldError);
+//			int iter6 = x6.trainNetwork(name6train, 10, 10, 1, outputTrain);
+//			System.out.println("iterations: " + iter6 + ", Finished! Error: " + x6.oldError);
+        //x6.testNetwork(name6test, outputTest);
         //} //end for
     }
 
