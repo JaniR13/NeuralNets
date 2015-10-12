@@ -86,7 +86,7 @@ public class RunModels {
 			String outputTrain = filePathOutputTrain;
 			String outputTest = filePathOutputTest;
 			
-			int iter2 = x2.trainNetwork(name2train, 10, 11, 1, outputTrain);
+			int iter2 = x2.trainNetwork(name2train, 10, 10, 1, outputTrain);
 			System.out.println("i: " + i + ", iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
 			x2.testNetwork(name2test, outputTest);
                         
