@@ -13,8 +13,8 @@ import java.util.Random;
  * @author Janette
  */
 public class RBFNode {
-    ArrayList<Double> outweights = new ArrayList<Double>(); //weights to each output node from this RBF
-    ArrayList<Double> oldweights = new ArrayList<Double>();//array to keep track of old weights so can revert if error is bigger
+    double outweight; //weights to each output node from this RBF
+    double oldweight;//array to keep track of old weights so can revert if error is bigger
     ArrayList<Double> means = new ArrayList<Double>(); //center of the cluster as vector
     double activationOut;//output calculate Activation function
     double input;
@@ -23,8 +23,8 @@ public class RBFNode {
         Random rand = new Random();
         for(int i = 0; i < numOutputs; i++){
             double r = rand.nextDouble();
-            outweights.add(r);
-            oldweights.add(r);
+            outweight = r;
+            oldweight = r;
         }
     }
     public double calculateActivation(ArrayList<Double> x, double var, int dim){
