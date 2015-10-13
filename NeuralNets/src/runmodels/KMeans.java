@@ -15,6 +15,7 @@ import java.util.Random;
 public class KMeans {
 
     private Distance d = new Distance();
+    public double maxD;
 
     public KMeans() {
 
@@ -100,7 +101,20 @@ public class KMeans {
             }
             //System.out.println(i + " : " + clusters);
         }
-
+        maxD = 0;
+        double curD = 0;
+        for (int i = 0; i < clusters.size(); i++) {
+            for (int j = 0; j < clusters.size(); j++) {
+                if (i != j) {
+                    curD = d.calculateDistance(clusters.get(i), clusters.get(j), dim);
+                    //System.out.println(curD);
+                    if (curD > maxD) {
+                        maxD = curD;
+                    }
+                }
+            }
+        }
+        System.out.println("maxD: " + maxD);
         return clusters;
     }
 }
