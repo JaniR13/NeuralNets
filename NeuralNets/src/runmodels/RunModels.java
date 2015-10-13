@@ -140,7 +140,7 @@ public class RunModels {
                 String name2train = filePathTrain;
                 String name2test = filePathTest;
                 KernelANN x2 = new KernelANN();
-                int iter2 = x2.trainNetwork(name2train, 10, 10, 120, outputTrain);
+                int iter2 = x2.trainNetwork(name2train, 10, 120, outputTrain);
                 System.out.println("iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
                 x2.testNetwork(name2test, outputTest);
     		} else if (size.equals("3")) {
@@ -149,7 +149,7 @@ public class RunModels {
                 KernelANN x3 = new KernelANN();
                 String name3train = filePathTrain;
                 String name3test = filePathTest;
-                int iter3 = x3.trainNetwork(name3train, 10, 10, 1330, outputTrain);
+                int iter3 = x3.trainNetwork(name3train, 10, 1330, outputTrain);
                 System.out.println("iterations: " + iter3 + ", Finished! Error: " + x3.oldError);
                 x3.testNetwork(name3test, outputTest);
     		} else if (size.equals("4")) {
@@ -158,7 +158,7 @@ public class RunModels {
       			KernelANN x4 = new KernelANN();
       			String name4train = filePathTrain;
       			String name4test = filePathTest;			
-      			int iter4 = x4.trainNetwork(name4train, 10, 10, 14640, outputTrain);
+      			int iter4 = x4.trainNetwork(name4train, 10, 14640, outputTrain);
       			System.out.println("iterations: " + iter4 + ", Finished! Error: " + x4.oldError);
       			x4.testNetwork(name4test, outputTest);
     		} else if (size.equals("5")) {
@@ -167,7 +167,7 @@ public class RunModels {
     			KernelANN x5 = new KernelANN();
     			String name5train = filePathTrain;
     			String name5test = filePathTest;
-    			int iter5 = x5.trainNetwork(name5train, 10, 10, 161050, outputTrain);
+    			int iter5 = x5.trainNetwork(name5train, 10, 161050, outputTrain);
     			System.out.println("iterations: " + iter5 + ", Finished! Error: " + x5.oldError);
     			x5.testNetwork(name5test, outputTest);
     		} else if (size.equals("6")) {
@@ -176,7 +176,7 @@ public class RunModels {
         			KernelANN x6 = new KernelANN();
         			String name6train = filePathTrain;
         			String name6test = filePathTest;			
-        			int iter6 = x6.trainNetwork(name6train, 10, 10, 1771560, outputTrain);
+        			int iter6 = x6.trainNetwork(name6train, 10, 1771560, outputTrain);
         			System.out.println("iterations: " + iter6 + ", Finished! Error: " + x6.oldError);
                     x6.testNetwork(name6test, outputTest);
     		}
