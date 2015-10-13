@@ -21,7 +21,8 @@ public class RunModels {
      */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-
+        AbstractFunction rf = new RosenbrockFunction(2);
+        
         // gets the os for the computer this program is run on
         String os = System.getProperty("os.name").toLowerCase();
         // gets the home location
@@ -60,33 +61,38 @@ public class RunModels {
         System.out.println("Select Test Data Location");
         filePathTest = callFileChooser(filePathTest);
         System.out.println("Test Data: " + filePathTest);
-        System.out.println("Enter the name of your output file for training >");
-        outputNameTrain = in.nextLine();
-        System.out.println("Enter the name of your output file for testing >");
-        outputNameTest = in.nextLine();
-        filePathOutputTrain = ("Select Desired Output Location");
-        filePathOutputTrain = callFileChooser(filePathOutputTrain);
-        filePathOutputTest = filePathOutputTrain;
-        filePathOutputTrain += File.separator + outputNameTrain + ".txt";
-        filePathOutputTest += File.separator + outputNameTest + ".txt";
+
+        //		  Output info commented out for FFNN 	        
+//        System.out.println("Enter the name of your output file for training >");
+//        outputNameTrain = in.nextLine();
+//        System.out.println("Enter the name of your output file for testing >");
+//        outputNameTest = in.nextLine();
+//        filePathOutputTrain = ("Select Desired Output Location");
+//        filePathOutputTrain = callFileChooser(filePathOutputTrain);
+//        filePathOutputTest = filePathOutputTrain;
+//        filePathOutputTrain += File.separator + outputNameTrain + ".txt";
+//        filePathOutputTest += File.separator + outputNameTest + ".txt";
 
         // updates filepath with trailing separator
         filePathTrain += File.separator;
         filePathTest += File.separator;
-        filePathOutputTrain += File.separator;
-        filePathOutputTest += File.separator;
+//        filePathOutputTrain += File.separator;
+//        filePathOutputTest += File.separator;
 
-		//Tests the Kernel ANN (RBF)
-        
-        String outputTrain = filePathOutputTrain;
-        String outputTest = filePathOutputTest;
-        //for a network of size 2
-        String name2train = filePathTrain;
-        String name2test = filePathTest;
-        KernelANN x2 = new KernelANN();
-        int iter2 = x2.trainNetwork(name2train, 10, 10, 120, outputTrain);
-        System.out.println("iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
-        x2.testNetwork(name2test, outputTest);
+        //tests the FFNN
+
+        FeedForwardExperiment test1 = new FeedForwardExperiment(filePathTrain, filePathTest);
+              
+		//Tests the Kernel ANN (RBF)    
+//        String outputTrain = filePathOutputTrain;
+//        String outputTest = filePathOutputTest;
+//        //for a network of size 2
+//        String name2train = filePathTrain;
+//        String name2test = filePathTest;
+//        KernelANN x2 = new KernelANN();
+//        int iter2 = x2.trainNetwork(name2train, 10, 10, 120, outputTrain);
+//        System.out.println("iterations: " + iter2 + ", Finished! Error: " + x2.oldError);
+//        x2.testNetwork(name2test, outputTest);
 
 //	//for a network of size 3
 //        KernelANN x3 = new KernelANN();

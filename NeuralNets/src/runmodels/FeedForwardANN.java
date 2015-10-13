@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 	public class FeedForwardANN {
 
-		private int layers;
+		public int layers;
 		private int numOutputs;
 		private int numHiddenNodesPerLayer;
 		
 		// TODO: normalize data
 		
 		private ArrayList<Double> outputs;
-		private ArrayList<ArrayList<Neuron>> nodes;
+		public ArrayList<ArrayList<Neuron>> nodes;
 		private ArrayList<Double> inputs;
 		private ArrayList<Double> targetOutputs;
 		private ActivationFunction f;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 		private double eta = .4;
 		private boolean momentum;
 		private double alpha = .4;
-		private double epsilon = .00001;
+		private double epsilon = .01;
 
 		/**
 		 * Creates a new feed-forward neural network
@@ -32,8 +32,8 @@ import java.util.ArrayList;
 		 * @param momemtum will momentum be used?
 		 */
 		public FeedForwardANN(int hiddenLayers, int numHiddenNodesPerLayer,
-				ArrayList<Double> inputs, ArrayList<Double> targetOutputs,
-				boolean logistic, boolean momemtum) {
+			ArrayList<Double> inputs, ArrayList<Double> targetOutputs,
+			boolean logistic, boolean momemtum) {
 			this.layers = hiddenLayers + 2;
 			outputs = new ArrayList<Double>();
 			nodes = new ArrayList<ArrayList<Neuron>>();
@@ -182,7 +182,7 @@ import java.util.ArrayList;
 				}
 				generateOutput();
 				count++;
-				if (count > 10000000){
+				if (count > 10000){
 					System.out.println("++++++++++++ Didn't converge ++++++++++++");
 					break;
 				}
@@ -347,11 +347,11 @@ import java.util.ArrayList;
 			for (int l = 0; l < layers; l++) {
 				// for each node in the layer:
 				for (int n = 0; n < nodes.get(l).size(); n++) {
-					System.out.print(nodes.get(l).get(n).toString());
+					//System.out.print(nodes.get(l).get(n).toString());
 				}
-				System.out.println();
+				//System.out.println();
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		
 		public void setInputs(ArrayList<Double> newInputs){
