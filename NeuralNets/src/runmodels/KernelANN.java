@@ -25,6 +25,7 @@ public class KernelANN {
     private double isStuck2;
     private double isStuck3;
     private boolean stuck;
+    private double meanError;
     public KernelANN() {
     }
 
@@ -80,9 +81,9 @@ public class KernelANN {
             bw = new BufferedWriter(new FileWriter(outputFile));
             ArrayList<ArrayList> input = readData(fname);//initialize data
             kMeansClustering(k, input, datasize);//use input to cluster data
-            oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
+            meanError = oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
 
-            while (oldError > threshold && !stuck) {//until either convergence, or a certain number of iterations
+            while (meanError > threshold && !stuck) {//until either convergence, or a certain number of iterations
                 for (int i = 0; i < datasize; i++) {//for each training example
                     for (int j = 0; j < k; j++) {//for each RBF function
                         functions.get(j).activationOut
@@ -112,6 +113,7 @@ public class KernelANN {
                         oldError = calculateTotalError(targets, outputs);
                         revertWeights();
                     }
+                    meanError = oldError/datasize;
                 }
                 count2++;
                 bw.newLine();
