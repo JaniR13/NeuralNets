@@ -5,19 +5,22 @@ import java.util.ArrayList;
 
 	public class FeedForwardANN {
 
-		private int layers;
+		public int layers;
 		private int numOutputs;
 		private int numHiddenNodesPerLayer;
+		
+		// TODO: normalize data
+		
 		private ArrayList<Double> outputs;
-		private ArrayList<ArrayList<Neuron>> nodes;
+		public ArrayList<ArrayList<Neuron>> nodes;
 		private ArrayList<Double> inputs;
 		private ArrayList<Double> targetOutputs;
 		private ActivationFunction f;
 
 		private double eta = .4;
 		private boolean momentum;
-		private double alpha = .6;
-		private double epsilon = .00001;
+		private double alpha = .4;
+		private double epsilon = .01;
 
 		/**
 		 * Creates a new feed-forward neural network
@@ -29,8 +32,8 @@ import java.util.ArrayList;
 		 * @param momemtum will momentum be used?
 		 */
 		public FeedForwardANN(int hiddenLayers, int numHiddenNodesPerLayer,
-				ArrayList<Double> inputs, ArrayList<Double> targetOutputs,
-				boolean logistic, boolean momemtum) {
+			ArrayList<Double> inputs, ArrayList<Double> targetOutputs,
+			boolean logistic, boolean momemtum) {
 			this.layers = hiddenLayers + 2;
 			outputs = new ArrayList<Double>();
 			nodes = new ArrayList<ArrayList<Neuron>>();
@@ -87,12 +90,25 @@ import java.util.ArrayList;
 				System.out.println(outputs.get(i));
 			}
 			System.out.println();
+			
+			calcNetworkError();
+		}
+		
+		/** Calculates mean squared error of network */
+		public double calcNetworkError(){
+			Double sum = 0.0;
+			for (int i = 0; i < numOutputs; i++){
+				sum += ((targetOutputs.get(i) - outputs.get(i)) * (targetOutputs.get(i) - outputs.get(i)));
+			}
+			return sum/2;
 		}
 
-		protected void train() {
+		protected ArrayList<Double> train() {
 			generateOutput();
 			
 			print();
+			
+			int count = 0;
 			
 			while (!testTerminationCriterion()) {
 
@@ -165,7 +181,13 @@ import java.util.ArrayList;
 					}
 				}
 				generateOutput();
+				count++;
+				if (count > 10000){
+					System.out.println("++++++++++++ Didn't converge ++++++++++++");
+					break;
+				}
 			} 
+			return outputs;
 		}
 
 		/** Calculates weight change for a hidden node */
@@ -325,11 +347,19 @@ import java.util.ArrayList;
 			for (int l = 0; l < layers; l++) {
 				// for each node in the layer:
 				for (int n = 0; n < nodes.get(l).size(); n++) {
-					System.out.print(nodes.get(l).get(n).toString());
+					//System.out.print(nodes.get(l).get(n).toString());
 				}
-				System.out.println();
+				//System.out.println();
 			}
-			System.out.println();
+			//System.out.println();
+		}
+		
+		public void setInputs(ArrayList<Double> newInputs){
+			this.inputs = newInputs;
+		}
+		
+		public void setTargetOutputs(ArrayList<Double> newOutputs){
+			this.targetOutputs = newOutputs;
 		}
 
 	}
