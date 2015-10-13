@@ -59,7 +59,7 @@ public class FeedForwardExperiment {
 	ArrayList<ArrayList<Double>> sixdtestinputs = new ArrayList<ArrayList<Double>>();
 	ArrayList<ArrayList<Double>> sixdtestoutputs = new ArrayList<ArrayList<Double>>();
 
-	int numHidden = 2; // TODO: 0, 1, 2
+	int numHidden = 0; // TODO: 0, 1, 2
 
 	// a string to hold the error value, for use in passing to R
 	String error = "";
@@ -265,7 +265,7 @@ public class FeedForwardExperiment {
 		for (int i = 0; i < twodtraininputs.size(); i++) {
 			// creates new ANN
 			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, twodtraininputs.get(i), twodtrainoutputs.get(i),
-					true, false);
+					true, true);
 			// trains net
 			newNet.train();
 			// adds net to appropriate group
@@ -275,7 +275,7 @@ public class FeedForwardExperiment {
 		for (int i = 0; i < threedtraininputs.size(); i++) {
 			// creates new ANN
 			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, threedtraininputs.get(i),
-					threedtrainoutputs.get(i), true, false);
+					threedtrainoutputs.get(i), true, true);
 			// trains net
 			newNet.train();
 			// adds net to appropriate group
@@ -285,7 +285,7 @@ public class FeedForwardExperiment {
 		for (int i = 0; i < fourdtraininputs.size(); i++) {
 			// creates new ANN
 			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, fourdtraininputs.get(i), fourdtrainoutputs.get(i),
-					true, false);
+					true, true);
 			// trains net
 			newNet.train();
 			// adds net to appropriate group
@@ -295,7 +295,7 @@ public class FeedForwardExperiment {
 		for (int i = 0; i < fivedtraininputs.size(); i++) {
 			// creates new ANN
 			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, fivedtraininputs.get(i), fivedtrainoutputs.get(i),
-					true, false);
+					true, true);
 			// trains net
 			newNet.train();
 			// adds net to appropriate group
@@ -305,7 +305,7 @@ public class FeedForwardExperiment {
 		for (int i = 0; i < sixdtraininputs.size(); i++) {
 			// creates new ANN
 			FeedForwardANN newNet = new FeedForwardANN(numHidden, 5, sixdtraininputs.get(i), sixdtrainoutputs.get(i),
-					true, false);
+					true, true);
 			// trains net
 			newNet.train();
 			// adds net to appropriate group
