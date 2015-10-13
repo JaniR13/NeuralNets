@@ -13,7 +13,7 @@ public class KernelANN {
     private ArrayList<RBFNode> functions = new ArrayList();//the list of RBF functions
     private ArrayList<Double> outputs = new ArrayList();//ordinarily a single double but need an arbitrary number of outputs
     private ArrayList<Double> targets = new ArrayList();//list of outputs of Rosenbrock function, our ideal numbers
-    private double eta = 0.1;//learning rate
+    private double eta = 0.05;//learning rate
     private Distance dist = new Distance();
     private double variance; //a constant representation of error in the dataset
     public double oldError;//Error with each training example
@@ -21,7 +21,10 @@ public class KernelANN {
     //public double totalError;
     public int dim2 = 0;//number of dimensions in the data set, set at read data
     public int datasize = 0;//number of items in the data set
-
+    private double isStuck;
+    private double isStuck2;
+    private double isStuck3;
+    private boolean stuck;
     public KernelANN() {
     }
 
@@ -66,54 +69,70 @@ public class KernelANN {
         return input;
     }
 
-    public int trainNetwork(String fname, double var, int k, double threshold, String outputFile) {
+    public int trainNetwork(String fname, int k, double threshold, String outputFile) {
         BufferedWriter bw = null;
         //String outputFile = "";
-        ArrayList<ArrayList> input = readData(fname);//initialize data
-        kMeansClustering(k, input, datasize, var);//use input to cluster data
-        oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
         int count2 = 0;
-        while (oldError > threshold && count2 < Integer.MAX_VALUE) {//until either convergence, or a certain number of iterations
-            for (int i = 0; i < datasize; i++) {//for each training example
-                for (int j = 0; j < k; j++) {//for each RBF function
-                    functions.get(j).activationOut
-                            = functions.get(j).calculateActivation(input.get(i), variance, dim2);//input each dimension into each RBF and calculate activation
-                }
-                int sum = 0;
-                for (int d = 0; d < dim2; d++) {
-                    int n = (int) input.get(i).get(d);
-                    sum += n;
-                }
-                double oldOut = outputs.get(i);
-                double newOut = generateOutputs();//generate the output for the training example
-                updateAllWeights(targets.get(i), newOut, sum);//update all the weights using the new output
-                outputs.set(i, newOut);
-                newError = calculateTotalError(targets, outputs);
-                if (newError <= oldError) {
+        try {
+            isStuck = -1;
+            isStuck = -2;
+            stuck = false;
+            bw = new BufferedWriter(new FileWriter(outputFile));
+            ArrayList<ArrayList> input = readData(fname);//initialize data
+            kMeansClustering(k, input, datasize);//use input to cluster data
+            oldError = (double) (Double.MAX_VALUE);//set initial error to maximum value
 
-                    oldError = newError;
-                } else {
-                    outputs.set(i, oldOut);
-                    oldError = calculateTotalError(targets, outputs);
-                    revertWeights();
+            while (oldError > threshold && !stuck) {//until either convergence, or a certain number of iterations
+                for (int i = 0; i < datasize; i++) {//for each training example
+                    for (int j = 0; j < k; j++) {//for each RBF function
+                        functions.get(j).activationOut
+                                = functions.get(j).calculateActivation(input.get(i), variance, dim2);//input each dimension into each RBF and calculate activation
+                    }
+                    
+                    double oldOut = outputs.get(i);
+                    double newOut = generateOutputs();//generate the output for the training example
+                    if(i == datasize-1){
+                        
+                        isStuck = isStuck2;
+                        isStuck2 = isStuck3;
+                        isStuck3 = newOut;
+                        if(isStuck == isStuck2 && isStuck2 == isStuck3){
+                            stuck = true;
+                        }
+                    }
+                    updateAllWeights(targets.get(i), newOut);//update all the weights using the new output
+                    outputs.set(i, newOut);
+                    newError = calculateTotalError(targets, outputs);
+                    if (newError < oldError || count2==0) {
+                        //System.out.println("out: " + outputs + ", targets: " + targets + ", Error: " + newError);
+                        oldError = newError;
+                    } else {
+                        //System.out.println("out: " + outputs + ", targets: " + targets + ", weights reverted: " + newError);
+                        outputs.set(i, oldOut);
+                        oldError = calculateTotalError(targets, outputs);
+                        revertWeights();
+                    }
                 }
+                count2++;
+                bw.newLine();
+                bw.write("Iteration: " + count2 + ", Total Error: " + oldError + ", Variance: " + variance);
+
+                System.out.println("Iteration: " + count2 + ", Total Error: " + oldError + ", Variance: " + variance);
             }
-            count2++;
-            try {
-                bw = new BufferedWriter(new FileWriter(outputFile));
-                bw.append("\n");
-                bw.append("Iteration: " + count2 + ", Total Error: " + oldError);
-                bw.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println("Iteration: " + count2 + ", Total Error: " + oldError);
+            bw.close();
+            return count2;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return count2;
     }
 
-    private double calculateTotalError(ArrayList target, ArrayList out) {
-        return dist.calculateDistance(target, out, 1);
+    private double calculateTotalError(ArrayList<Double> target, ArrayList<Double> out) {
+        double sum = 0;
+        for(int i = 0; i < target.size(); i++){
+            sum += Math.abs(target.get(i) - out.get(i));
+        }
+        return sum;
     }
 
     private double calcError(ArrayList target, ArrayList out) {
@@ -124,7 +143,7 @@ public class KernelANN {
         return dist.calculateDistance(target, out);
     }
 
-    public void kMeansClustering(int k, ArrayList<ArrayList> in, int outDim, double var) {//input all examples and k
+    public void kMeansClustering(int k, ArrayList<ArrayList> in, int outDim) {//input all examples and k
         KMeans kmeans = new KMeans();
         ArrayList<ArrayList> meanslist = kmeans.createClusters(k, in, dim2);
         buildNetwork(dim2, outDim, k);
@@ -132,7 +151,7 @@ public class KernelANN {
             //System.out.println("means: " + meanslist.get(i));
             functions.get(i).means.addAll(meanslist.get(i));
         }
-        variance = var;
+        variance = kmeans.maxD / 2 * Math.sqrt(k);
     }
 
     private double updateIndWeight(double inweight, double input, double target, double observed) {
@@ -141,15 +160,18 @@ public class KernelANN {
         return outweight;
     }
 
-    private void updateAllWeights(double target, double output, double input) {
+    private void updateAllWeights(double target, double output) {
         double x = 0;
         for (int i = 0; i < functions.size(); i++) {//for each hidden node
-            for (int j = 0; j < 1; j++) {
-                functions.get(i).oldweights.set(j, functions.get(i).outweights.get(j));
-                x = updateIndWeight(functions.get(i).outweights.get(j),
-                        functions.get(i).activationOut, target, output);
-                functions.get(i).outweights.set(j, x);
-            }
+            //for (int j = 0; j < 1; j++) {
+
+            functions.get(i).oldweight = functions.get(i).outweight;
+            x = updateIndWeight(functions.get(i).outweight,
+                    functions.get(i).activationOut, target, output);
+            functions.get(i).outweight = x;
+            //System.out.println("new weight: " + functions.get(i).outweight + ", old weight: " + functions.get(i).oldweight);
+            
+            //}
         }
     }
 
@@ -158,7 +180,7 @@ public class KernelANN {
         for (int i = 0; i < 1; i++) {
             //for each output node calculate weighted sum of hidden layers
             for (int j = 0; j < functions.size(); j++) {//each hidden node has output
-                sum += functions.get(j).activationOut * functions.get(j).outweights.get(i);
+                sum += functions.get(j).activationOut * functions.get(j).outweight;
             }
         }
         return sum;
@@ -168,7 +190,7 @@ public class KernelANN {
         //System.out.println("Weights reverted");
         for (int i = 0; i < functions.size(); i++) {
             for (int j = 0; j < 1; j++) {
-                functions.get(i).outweights.set(j, functions.get(i).oldweights.get(j));
+                functions.get(i).outweight = functions.get(i).oldweight;
             }
         }
     }
@@ -178,7 +200,7 @@ public class KernelANN {
         double otherStuff = 0;
         for (int i = 0; i < functions.size(); i++) {
             stuff = functions.get(i).calculateActivation(input, variance, dim2);
-            otherStuff += stuff * functions.get(i).outweights.get(0);
+            otherStuff += stuff * functions.get(i).outweight;
         }
         return otherStuff;
     }
@@ -219,7 +241,7 @@ public class KernelANN {
                 bw.newLine();
                 double out = testSingleInput(input.get(i));
                 double error = calcError(targetOut.get(i), out);
-                bw.write(input.get(i) + ", " + out + ", " + targetOut.get(i)+", " + error);
+                bw.write(input.get(i) + ", " + out + ", " + targetOut.get(i) + ", " + error);
 
             }
             bw.close();
