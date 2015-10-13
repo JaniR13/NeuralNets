@@ -25,6 +25,9 @@ public class RosenbrockFunction extends AbstractFunction {
 		double intermediatecalc;
 		double sum = 0;
 
+		//for FFNN, leave size uncommented so grows at each iteration
+		//for RBF, make files of each size
+		
 		//file to write the full spectrum of inputs/outputs to
 		BufferedWriter writer = null;
 		//file to write a subset of the inputs/outputs to
@@ -357,13 +360,13 @@ public class RosenbrockFunction extends AbstractFunction {
 			//while there is still data left to be read
 			while ((sCurrentLine = reader.readLine()) != null) {
 				//generate a random number to determine whether line should be in training or test set
-				randomNumber = randInt(0, 5);
-				// print to test data, ~80% of data goes to test set
+				randomNumber = randInt(0, 100);
+				// print to training data, ~80% of data goes to test set
 				if (randomNumber == 0 || randomNumber == 1 || randomNumber == 3 || randomNumber == 4 || randomNumber == 5) {
 					trainWriter.write(sCurrentLine);
 					trainWriter.newLine();
-				} else {
-				// print to training data, ~20% of data goes to training set
+				} else if (randomNumber == 2) {
+				// print to test data, ~20% of data goes to training set
 					testWriter.write(sCurrentLine);
 					testWriter.newLine();
 				}

@@ -125,7 +125,8 @@ public class FeedForwardExperiment {
 			// adds error to appropriate arraylist
 			twoderrors.add(testNet.calcNetworkError());
 			error = Double.toString(testNet.calcNetworkError());
-
+			System.out.println("Error is " + error);
+			
 			writer.write(error);
 			writer.println();
 
@@ -156,7 +157,6 @@ public class FeedForwardExperiment {
 			// adds error to appropriate arraylist
 			threederrors.add(testNet.calcNetworkError());
 			error = Double.toString(testNet.calcNetworkError());
-
 			writer.write(error);
 			writer.println();
 			System.out.println("Test of 3 is done");
@@ -187,7 +187,6 @@ public class FeedForwardExperiment {
 			// adds error to appropriate arraylist
 			fourderrors.add(testNet.calcNetworkError());
 			error = Double.toString(testNet.calcNetworkError());
-
 			writer.write(error);
 			writer.println();
 
@@ -219,8 +218,6 @@ public class FeedForwardExperiment {
 			// adds error to appropriate arraylist
 			fivederrors.add(testNet.calcNetworkError());
 			error = Double.toString(testNet.calcNetworkError());
-			System.out.println(error);
-
 			writer.write(error);
 			writer.println();
 
@@ -250,14 +247,14 @@ public class FeedForwardExperiment {
 			testNet.train();
 			// adds error to appropriate arraylist
 			sixderrors.add(testNet.calcNetworkError());
-			String error = "";
+			//String error = "";
 			error = Double.toString(testNet.calcNetworkError());
-			System.out.println(error);
 
 			writer.write(error);
 			writer.println();
 
 			System.out.println("Test of 6 is done");
+			System.out.println("All values of n from 2 - 6 have been tested.");
 		}
 		writer.close();
 
