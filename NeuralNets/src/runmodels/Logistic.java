@@ -1,5 +1,7 @@
 package runmodels;
-
+/*
+ * 
+ */
 
 public class Logistic extends ActivationFunction{
 

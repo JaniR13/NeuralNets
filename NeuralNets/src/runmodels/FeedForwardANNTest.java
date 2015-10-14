@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+/*
+ * A class to test the FeedForwardANN.
+ */
 
 public class FeedForwardANNTest {
 

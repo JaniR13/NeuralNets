@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 
+/*
+ * A class to perform the feed forward neural network experiments. Constructs, 
+ * trains, and tests the ANN for each specified input size n = 2, 3, 4, 5 and 6. 
+ */
+
 public class FeedForwardExperiment {
 
 	// TRAINING DATA
@@ -94,10 +99,13 @@ public class FeedForwardExperiment {
 
 	}
 
+	//runs the test instances on the trained network, prints the error to the
+	//appropriate file
 	private void runTestInstances() {
 		Random networkPicker = new Random();
 		PrintWriter writer = null;
-
+		
+		//constructs output file
 		try {
 			writer = new PrintWriter("NeuralNets/src/runmodels/output2.txt");
 		} catch (FileNotFoundException e1) {
@@ -105,11 +113,10 @@ public class FeedForwardExperiment {
 			e1.printStackTrace();
 		}
 
-		// runs through each test example
+		// runs through each test example of size 2
 		for (int i = 0; i < twodtestinputs.size(); i++) {
 			int index = networkPicker.nextInt(twodnets.size());
 			FeedForwardANN testNet = twodnets.get(index);
-
 			// for all nodes, clear inputs
 			// (output already taken care of in Neuron.calcOutput()
 			for (int l = 1; l < testNet.layers; l++) {
@@ -133,12 +140,14 @@ public class FeedForwardExperiment {
 		}
 		writer.close();
 		
+		//constructs output file
 		try {
 			writer = new PrintWriter("NeuralNets/src/runmodels/output3.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		// runs through each test example of size 3
 		for (int i = 0; i < threedtestinputs.size(); i++) {
 			int index = networkPicker.nextInt(threednets.size());
 			FeedForwardANN testNet = threednets.get(index);
@@ -162,13 +171,13 @@ public class FeedForwardExperiment {
 		}
 		writer.close();
 
-		// runs through each test example
+		//constructs output file
 		try {
 			writer = new PrintWriter("NeuralNets/src/runmodels/output4.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		// runs through each test example for size 4
 		for (int i = 0; i < fourdtestinputs.size(); i++) {
 			int index = networkPicker.nextInt(fourdnets.size());
 			FeedForwardANN testNet = fourdnets.get(index);
@@ -192,14 +201,15 @@ public class FeedForwardExperiment {
 			System.out.println("Test of 4 is done");
 		}
 		writer.close();
-
+		
+		//constructs output file
 		try {
 			writer = new PrintWriter("NeuralNets/src/runmodels/output5.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		// runs through each test example
+		// runs through each test example for size 5
 		for (int i = 0; i < fivedtestinputs.size(); i++) {
 			int index = networkPicker.nextInt(fivednets.size());
 			FeedForwardANN testNet = fivednets.get(index);
@@ -223,12 +233,14 @@ public class FeedForwardExperiment {
 		}
 		writer.close();
 
+		//constructs output file		
 		try {
 			writer = new PrintWriter("NeuralNets/src/runmodels/output6.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// runs through each test example
+		
+		// runs through each test example for size 6
 		for (int i = 0; i < sixdtestinputs.size(); i++) {
 			int index = networkPicker.nextInt(sixdnets.size());
 			FeedForwardANN testNet = sixdnets.get(index);
@@ -249,14 +261,15 @@ public class FeedForwardExperiment {
 			error = Double.toString(testNet.calcNetworkError());
 			writer.write(error);
 			writer.println();
+			//Lets user know testing is done
 			System.out.println("Test of 6 is done");
 			System.out.println("All values of n from 2 - 6 have been tested.");
 			System.out.println("Check your output files.");
 		}
 		writer.close();
-
 	}
 
+	//Builds training nets for each input size, with specified parameters
 	private void createTrainingNets() {
 		// runs through each training example
 		for (int i = 0; i < twodtraininputs.size(); i++) {
@@ -480,6 +493,7 @@ public class FeedForwardExperiment {
 		System.out.println("End normalizing data");
 	}
 
+	//gets training examples from file, breaks up by size
 	private void trainExamplesFromFile(String fname) {
 		BufferedReader br = null; // read from data
 		String line = "";
@@ -531,6 +545,7 @@ public class FeedForwardExperiment {
 		System.out.println("Done reading in training data");
 	}
 
+	//gets testing examples from file, breaks up by size
 	private void testExamplesFromFile(String fname) {
 		BufferedReader br = null;// read from data
 		String line = "";

@@ -1,4 +1,8 @@
 package runmodels;
+/*
+ * A unit test for the logistic function.
+ */
+
 
 import static org.junit.Assert.*;
 

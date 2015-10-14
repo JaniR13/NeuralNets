@@ -1,4 +1,8 @@
 package runmodels;
+/*
+ * The framework for calculating the linear activation function for the FFNN.
+ */
+
 
 public class Linear extends ActivationFunction {
 	

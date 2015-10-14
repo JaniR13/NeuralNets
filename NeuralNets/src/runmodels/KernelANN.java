@@ -1,5 +1,12 @@
 package runmodels;
 
+/*
+ * Class to construct a radial basis function neural network with an arbitrary
+ * number of inputs, Gaussian basis functions, and an arbitrary number of outputs.
+ * Program also accepts the number of inputs, Gaussians, and outputs. Activation function
+ * used is a Gaussian activation function.
+ */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -21,14 +28,16 @@ public class KernelANN {
     //public double totalError;
     public int dim2 = 0;//number of dimensions in the data set, set at read data
     public int datasize = 0;//number of items in the data set
-    private double isStuck;
+    //a series of terms used to determine if the program is returning the same output unnecessarily
+    private double isStuck; 
     private double isStuck2;
     private double isStuck3;
     private boolean stuck;
-    private double meanError;
+    private double meanError; 
     public KernelANN() {
     }
 
+    //builds the RBF network
     public void buildNetwork(int numInputs, int numOutputs, int numFunctions) {
         Random rand = new Random();
         double r = 0.0;
@@ -41,6 +50,7 @@ public class KernelANN {
         }
     }
 
+    //
     public ArrayList<ArrayList> readData(String fname) {
         BufferedReader br = null;//read from data
         String line = "";
@@ -69,7 +79,8 @@ public class KernelANN {
         }
         return input;
     }
-
+    
+    //reads in input/output data from file (as .csv), trains network
     public int trainNetwork(String fname, int k, double threshold, String outputFile) {
         BufferedWriter bw = null;
         //String outputFile = "";
@@ -129,6 +140,7 @@ public class KernelANN {
         return count2;
     }
 
+    //calculates the total error (that is, the distance between ALL target and observed outputs)
     private double calculateTotalError(ArrayList<Double> target, ArrayList<Double> out) {
         double sum = 0;
         for(int i = 0; i < target.size(); i++){
@@ -137,14 +149,17 @@ public class KernelANN {
         return sum;
     }
 
+    //calculates the distance between target and observed output
     private double calcError(ArrayList target, ArrayList out) {
         return dist.calculateDistance(target, out, 1);
     }
 
+    //calculates the distance between target and observed output (as a double)    
     private double calcError(double target, double out) {
         return dist.calculateDistance(target, out);
     }
 
+    //calculates the variance for the kMeans clustering
     public void kMeansClustering(int k, ArrayList<ArrayList> in, int outDim) {//input all examples and k
         KMeans kmeans = new KMeans();
         ArrayList<ArrayList> meanslist = kmeans.createClusters(k, in, dim2);
@@ -156,12 +171,14 @@ public class KernelANN {
         variance = kmeans.maxD / 2 * Math.sqrt(k);
     }
 
+    //performs the weight update for each of the individual edges
     private double updateIndWeight(double inweight, double input, double target, double observed) {
         double outweight = inweight;
         outweight += (target - observed) * eta * input;//multiply this by input
         return outweight;
     }
 
+    //updates weights for the entire network
     private void updateAllWeights(double target, double output) {
         double x = 0;
         for (int i = 0; i < functions.size(); i++) {//for each hidden node
@@ -177,6 +194,7 @@ public class KernelANN {
         }
     }
 
+    //generates the outputs for each node(s) in the output layer
     private double generateOutputs() {
         double sum = 0;
         for (int i = 0; i < 1; i++) {
@@ -188,6 +206,7 @@ public class KernelANN {
         return sum;
     }
 
+    //reverts the weights, when a worse guess is made
     private void revertWeights() {
         //System.out.println("Weights reverted");
         for (int i = 0; i < functions.size(); i++) {
@@ -197,9 +216,11 @@ public class KernelANN {
         }
     }
 
+    //tests a single input node
     public double testSingleInput(ArrayList input) {
         double stuff = 0;
         double otherStuff = 0;
+        //multiplies the activation function by the out weight for that node
         for (int i = 0; i < functions.size(); i++) {
             stuff = functions.get(i).calculateActivation(input, variance, dim2);
             otherStuff += stuff * functions.get(i).outweight;
@@ -207,6 +228,7 @@ public class KernelANN {
         return otherStuff;
     }
 
+    //tests the observed outputs against the target outputs
     public void testNetwork(String testData, String outputFile) {
         BufferedReader br = null;//read from data
         BufferedWriter bw = null;
@@ -216,6 +238,7 @@ public class KernelANN {
         ArrayList<Double> targetOut = new ArrayList<Double>();
         int testLen = 0;
         int count = 0;
+        //reads in target output (for testing)
         try {
             br = new BufferedReader(new FileReader(testData));
             while ((line = br.readLine()) != null) {
@@ -234,6 +257,7 @@ public class KernelANN {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //writes out observed output
         try {
             //String outputFile = "";
             bw = new BufferedWriter(new FileWriter(outputFile));

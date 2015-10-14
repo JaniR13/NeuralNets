@@ -1,31 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package runmodels;
 
 import java.util.ArrayList;
 import java.util.Random;
-
-/**
- *
- * @author Janette
+/*
+ * Performs the unsupervised learning (kMeans clustering) portion of the RBF
+ * network. Creates a variable amount of kMeans clusters, and these are used to
+ * split the data into clusters corresponding to the input data. The number of 
+ * kMeans clusters is a tunable parameter. 
  */
-public class KMeans {
 
+public class KMeans {
+	//variable to store the distance between clusters
     private Distance d = new Distance();
+    //variable to store the maximum distance between clusters
     public double maxD;
 
     public KMeans() {
 
     }
 
+    //creates the number of clusters (is a tunable parameter, resulting in the approximation
+    //of ANY function given a sufficient number of clusters
     public ArrayList<ArrayList> createClusters(int k, ArrayList<ArrayList> in, int inDim) {
         //System.out.println(k + " : clusters");
         Random rand = new Random();
         //int indim = in.get(0).size(); //figure out dimensionality of input
         ArrayList<ArrayList> clusters = new ArrayList(); //initalize cluster array
+        //clusters created randomly, refined through time
         for (int i = 0; i < k; i++) {//Generate k examples of dimensionality same as input
             clusters.add(new ArrayList());
             for (int j = 0; j < inDim; j++) {
@@ -39,6 +40,7 @@ public class KMeans {
         return clusters;
     }
 
+    //trains the clusters, which provides input to hidden layer
     public ArrayList<ArrayList> trainClusters(ArrayList<ArrayList> in, ArrayList<ArrayList> clusters, int iter, int dim) {
         //System.out.println(" in : " + in);
         //System.out.println(clusters);
@@ -48,6 +50,7 @@ public class KMeans {
         for (int i = 0; i < insize; i++) {
             in.get(i).add(0.0);
         }
+        //calculates distance for each datapoint in set, for each of the clusters
         for (int i = 0; i < iter; i++) {//number of iterations
             for (int j = 0; j < in.size(); j++) {//each datapoint
 
