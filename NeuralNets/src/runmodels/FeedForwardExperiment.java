@@ -60,7 +60,7 @@ public class FeedForwardExperiment {
 	ArrayList<ArrayList<Double>> sixdtestoutputs = new ArrayList<ArrayList<Double>>();
 
 	int numHidden = 0; // TODO: 0, 1, 2
-
+	
 	// a string to hold the error value, for use in passing to R
 	String error = "";
 
@@ -126,7 +126,6 @@ public class FeedForwardExperiment {
 			twoderrors.add(testNet.calcNetworkError());
 			error = Double.toString(testNet.calcNetworkError());
 			System.out.println("Error is " + error);
-			
 			writer.write(error);
 			writer.println();
 
@@ -220,7 +219,6 @@ public class FeedForwardExperiment {
 			error = Double.toString(testNet.calcNetworkError());
 			writer.write(error);
 			writer.println();
-
 			System.out.println("Test of 5 is done");
 		}
 		writer.close();
@@ -249,12 +247,11 @@ public class FeedForwardExperiment {
 			sixderrors.add(testNet.calcNetworkError());
 			//String error = "";
 			error = Double.toString(testNet.calcNetworkError());
-
 			writer.write(error);
 			writer.println();
-
 			System.out.println("Test of 6 is done");
 			System.out.println("All values of n from 2 - 6 have been tested.");
+			System.out.println("Check your output files.");
 		}
 		writer.close();
 

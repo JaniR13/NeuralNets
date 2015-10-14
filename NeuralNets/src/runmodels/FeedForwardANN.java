@@ -1,12 +1,18 @@
 package runmodels;
+/*
+ * A class to construct a Feed Forward Artificial Neural Network with 
+ * backpropagation learning. 
+ */
 
 import java.util.ArrayList;
 
 
 	public class FeedForwardANN {
-
+		//number of hidden layers, per instructions can be 0, 1, 2
 		public int layers;
+		//allows the user to specify the desired number of outputs
 		private int numOutputs;
+		//allows the user to specify the desired number of hidden nodes
 		private int numHiddenNodesPerLayer;
 		
 		// TODO: normalize data
@@ -17,11 +23,16 @@ import java.util.ArrayList;
 		private ArrayList<Double> targetOutputs;
 		private ActivationFunction f;
 
+		//learning rate, a tunable parameter
 		private double eta = .4;
+		//tunable parameter that allows to include momentum, if desired
 		private boolean momentum;
+		//the value for the momentum term
 		private double alpha = .4;
+		//the acceptable level of error for the ANN
 		private double epsilon = .01;
-
+		
+		
 		/**
 		 * Creates a new feed-forward neural network
 		 * @param hiddenLayers number of hidden layers
@@ -43,6 +54,8 @@ import java.util.ArrayList;
 			this.numOutputs = targetOutputs.size();
 			this.momentum = momentum;
 
+			//Determines if activation function is linear activation function or 
+			//sigmoidal activation function (in this case, logistic)
 			if (logistic) {
 				f = new Logistic();
 			} else {
@@ -84,12 +97,12 @@ import java.util.ArrayList;
 			}
 
 			// TODO: testing, remove
-			System.out.println();
-			System.out.println("Outputs:");
-			for (int i = 0; i < outputs.size(); i++) {
-				System.out.println(outputs.get(i));
-			}
-			System.out.println();
+//			System.out.println();
+//			System.out.println("Outputs:");
+//			for (int i = 0; i < outputs.size(); i++) {
+//				System.out.println(outputs.get(i));
+//			}
+//			System.out.println();
 			
 			calcNetworkError();
 		}
@@ -103,7 +116,8 @@ import java.util.ArrayList;
 			return sum/2;
 		}
 
-		protected ArrayList<Double> train() {
+		/** Performs the training of the ANN */		
+		protected ArrayList<Double> train() {		
 			generateOutput();
 			
 			print();
@@ -111,16 +125,13 @@ import java.util.ArrayList;
 			int count = 0;
 			
 			while (!testTerminationCriterion()) {
-
 				// below here is actual backprop
-
 				// 1) output layer
 				int target = 0;
 				for (Neuron n : nodes.get(layers - 1)) {
 					// System.out.println(n.toString());
 					// calculates delta
 					Double d = calcOutputDelta(n, targetOutputs.get(target));
-
 					// calculates each weight change
 					for (int w = 0; w < n.getWeights().size(); w++) {
 						// System.out.println(n.getWeights().get(w) +

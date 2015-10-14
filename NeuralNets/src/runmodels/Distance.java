@@ -1,16 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * A class to calculate the distance between the target and observed outputs.
  */
 package runmodels;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author Janette
- */
 public class Distance {
     public Distance(){
         
@@ -18,6 +12,8 @@ public class Distance {
     public double calculateDistance(ArrayList<Double>x, ArrayList<Double> means, int dim){
         //System.out.println("distance");
         double d = 0;
+        //calculates the distance for each dimension per method described in Haykin's
+        //2009 book, Neural networks and learning machines. 
         for(int i = 0; i < dim;i++){
             //System.out.println(means.get(i) + " : " + x.get(i));
             double g = Double.parseDouble(""+means.get(i));
@@ -27,6 +23,7 @@ public class Distance {
         d = Math.sqrt(d);
         return d;
     }
+    
     public double calculateDistance(double x, double means){
         double d = Math.pow(x-means, 2);
         d = Math.sqrt(d);
