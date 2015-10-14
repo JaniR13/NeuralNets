@@ -85,9 +85,9 @@ public class KMeans {
                         int c2 = (int) (c3);
                         //System.out.println("c2: " + c2);
                         if (c2 == c) {
-                            int blergh = (int) in.get(j).get(l);
+                            int cast = (int) in.get(j).get(l);
                             //System.out.println("blergh: " + blergh);
-                            dimAvg += (double) blergh;
+                            dimAvg += (double) cast;
                             //System.out.println("Dim Avg: " + dimAvg);
                             count++;
                             //ystem.out.println(count);
