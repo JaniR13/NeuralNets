@@ -33,7 +33,7 @@ public class KernelANN {
     private double isStuck2;
     private double isStuck3;
     private boolean stuck;
-    private double meanError; 
+    public double meanError; 
     public KernelANN() {
     }
 
