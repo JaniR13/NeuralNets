@@ -19,54 +19,92 @@ ActivationFunction.java
 	to implement 2 possibilities for the feed forward neural net (hereafter, FFNN) and one
 	for the radial basis function neural network (hereafter, RBFNN). 
 
+Linear.java	
+	Template for the linear activation function.
+
+Logistic.java	
+	Template for the sigmoidal activation function (which in this case, is the logistic
+	function.
+	
 NeuralNets.java
-	Template for a neural network. 
+	Template for a neural network. The parent class for both RBFNN and FFNN. 
 	
 NOTE: Not all of these abstract classes were fully implemented, but we kept them to 
 use as a template going forward, because we feel that is good programming practice. 
+
+///////// Unit Test Classes /////////
+FeedForwardANNTest.java
+	Tests the FeedForwardANN on a number of known input/output pairs. 
+	
+LogisticFunctionTest.java	
+	Tests the sigmoidal (in this case, linear) activation function. 
+
+NOTE: Due to compatibility issues with Eclipse and other IDEs, these unit tests can cause
+errors if the right permissions/libraries are not included. If that occurs any of the unit 
+tests can be removed without hindering the performance of the program.  
 	
 ///////// Other Classes /////////
-
-
+Distance.java
+	A class to calculate the distance in a RBFNN (used both in kMeans clustering 
+	and to calculate error. 
 
 FeedForwardANN.java
-	Will implement a feed-forward neural network that uses back-propagation.
-	
-ANNNode.java
-	Node for a FeedForwardANN. I should rename this to reflect that - my naming is bad and I feel bad.
-	
+	Implements a feed-forward neural network that uses back-propagation.
+
+FeedForwardExperiment.java
+	A class for explicitly constructing, testing, and training of a FFNN. The inputs
+	for the FFNN are read in from a .csv file, as are the outputs. These are used
+	to train the data, by measuring the distance between the target and observed
+	outputs. The trained network is then tested to determine how well the training
+	worked, and hence, how well the FFNN is approximating the Rosenbrock function. 
+	Per the project specifications, we test this network with 2, 3, 4, 5 and 6 input
+	values. 
+
 KernelANN.java
-	Implements a radial basis function network, with k-means clustering, gradient descent and 
-        Gaussian function for basis nodes. Simple weighted sum for output. 
+	A class for explicitly constructing, testing, and training a RBFNN. This RBFNN 
+	is implemented with k-means clustering, gradient descent and Gaussian function 
+	for basis nodes. Simple weighted sum for output. The trained network is then tested
+	to determine how well the training worked, and hence, how well the RBFNN is 
+	approximating the Rosenbrock function. Per the project specifications, we 
+	test this network with 2, 3, 4, 5 and 6 input values. Both input and target output 
+	values are read in from .csv. 
+	NOTE: The FFNN and RBF network handle reading in of the training and testing data
+	in different ways. For the FFNN, all training data is read in at once for each size
+	of input (2 - 6), and the same is true at testing. For the RBFNN, the data needs to
+	be broken out by size. This can be accomplished by commenting out the print lines
+	in RosenbrockFunction.java that do not correspond to the size you need.
+	  
+KMeans.java
+	Performs the unsupervised learning portion of the RBFNN. Gives us k clusters, and
+	through the calculation of the centroids of each of the clusters, we get our mu
+	values, where mu is the center of the RBFNN basis function.
 	
 LogisticFunction.java
 	A Logistic activation function for a neural network.
-	
+
 MeanSquaredError.java
- 	A loss function for calculating error. I know this is used for backprop, not sure if it can extend to an RBF.
+ 	A loss function for calculating error. Used in backprop learning algorithm of FFNN.
  	
-NeuralNets.java
- 	Will eventually become parent classes for KernelANN and FeedForwardANN, probably.
+Neuron.java
+	A class to create the neurons (also called nodes) of the FFNN. These simple 
+	computational units form the FFNN model.  
 
 RBFNode.java
-        Stores the weights, function, variance, mean for each Basis Function. 
+    Stores the weights, function, variance, mean for each Basis Function. 
+
+RosenbrockFunction.java
+ 	A class to generate outputs for the Rosenbrock function (see Equation 1 in our paper
+ 	to get the variant of Rosenbrock we used). This is the generalized version, not the 
+ 	classic version with only two inputs. As per the problem specifications, we are 
+ 	testing on 2, 3, 4, 5 and 6 inputs. 
  	
 RunModels.java
-	??????????????????????
+	Contains the main method for this program. Gives the user the choice of 
+	running the Rosenbrock Function Generator (RosenbrockFunction.java), a FFNN
+	(FeedForwardExperiment.java), or a RBFNN (KernelANN.java). Also allows the user
+	to specify the location of the input file (both training and test), and in the case
+	of RBFNN - their desired output file location as well. 
 
-
-
-##########################################
-############## KNOWN ISSUES: #############
-##########################################	
-
-* There is not yet a specific node class for KernelANN, but it can't use ANNNode (I think).
-
-* MeanSquareError function is not yet implemented or tested - can't measure error yet.
-
-* We're including the input nodes as a layer for FeedForward, so we need to make sure we know how to deal with that.
-
-* I have no idea how output nodes work or whether or not we're including them. 
-
-* We need some way to determine the structure of the network, i.e. how many layers and how many nodes per layer, AND
-	number of inputs.
+NOTE: Other files correspond to output generated by the program. RBFNN data is 
+generated to a location of the user's choosing, but for now FFNN data is saved in the
+runmodels folder.

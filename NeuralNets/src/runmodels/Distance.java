@@ -1,5 +1,5 @@
 /*
- * A class to calculate the distance between the target and observed outputs.
+ * A class to calculate the distance between the target and observed outputs in RBFNN.
  */
 package runmodels;
 
@@ -9,7 +9,8 @@ public class Distance {
     public Distance(){
         
     }
-    public double calculateDistance(ArrayList<Double>x, ArrayList<Double> means, int dim){
+
+	public double calculateDistance(ArrayList<Double>x, ArrayList<Double> means, int dim){
         //System.out.println("distance");
         double d = 0;
         //calculates the distance for each dimension per method described in Haykin's
