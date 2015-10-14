@@ -1,5 +1,7 @@
 package runmodels;
-
+/*
+ * An abstract class for use in building nodes (neurons) for the neural nets.
+ */
 import java.util.ArrayList;
 
 

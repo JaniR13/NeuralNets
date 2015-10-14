@@ -1,6 +1,7 @@
 package runmodels;
-
-// https://svn.cms.waikato.ac.nz/svn/weka/branches/stable-3-2-1/weka/classifiers/neural/NeuralMethod.java
+/*
+ * An abstract class for the functions implemented in this work.
+ */
 public abstract class AbstractFunction {
 	
 	public AbstractFunction(){

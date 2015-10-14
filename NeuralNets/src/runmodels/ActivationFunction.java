@@ -1,4 +1,7 @@
 package runmodels;
+/*
+ * An abstract class for the activation function for each neural net.
+ */
 
 public abstract class ActivationFunction {
 
