@@ -1,6 +1,6 @@
 package runmodels;
 /*
- * A class to construct a Feed Forward Artificial Neural Network with 
+ * A class to construct a Feed Forward Artificial Neural Network (FFNN, hereafter) with 
  * backpropagation learning. The FFANN is multilayer. Number of inputs, 
  * hidden layers, hidden units per layer and output are furnished as inputs to the 
  * program. Also, the type of activation function can be specified, and momentum

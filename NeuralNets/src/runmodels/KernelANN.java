@@ -1,7 +1,7 @@
 package runmodels;
 
 /*
- * Class to construct a radial basis function neural network with an arbitrary
+ * Class to construct a radial basis function neural network (RBFNN, hereafter) with an arbitrary
  * number of inputs, Gaussian basis functions, and an arbitrary number of outputs.
  * Program also accepts the number of inputs, Gaussians, and outputs. Activation function
  * used is a Gaussian activation function.

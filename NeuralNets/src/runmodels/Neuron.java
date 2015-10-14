@@ -1,11 +1,13 @@
 package runmodels;
-
+/*
+ * A class to create the neurons for a FFNN. 
+ */
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Neuron {
-
+	//the selected activation function (can be linear or sigmoidal)
 	private ActivationFunction f;
 	private MeanSquaredError loss;
 	private ArrayList<Neuron> descendants = new ArrayList<Neuron>();

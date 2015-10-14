@@ -1,6 +1,7 @@
 package runmodels;
 /*
- * 
+ * The framework for calculating the sigmoidal activation function 
+ * (which in this case is logistic).
  */
 
 public class Logistic extends ActivationFunction{
@@ -20,10 +21,12 @@ public class Logistic extends ActivationFunction{
 		k = 1;
 	}
 	
+	//calculates the function
 	public double calcfx(double x){
 		return ((L)/(1 + Math.exp(-1*k*(x-xo))));
 	}
 	
+	//calculates the partial derivative
 	public Double partialDeriv(Double neuronOutput){
 		return (neuronOutput * (1-neuronOutput));
 	}

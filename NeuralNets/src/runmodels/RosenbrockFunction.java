@@ -379,6 +379,12 @@ public class RosenbrockFunction extends AbstractFunction {
 		// a reader used to read the full file of Rosenbrock outputs
 		reader = new BufferedReader(new FileReader("NeuralNets/src/runmodels/rosenbrock.txt"));
 
+		//the series of while loops below scale the data accordingly, because we do 
+		//not want to use the entire 11^2+11^3+...+11^6 size dataset for training or 
+		//testing. Therefore, from the full dataset, we loop through the file and
+		//probabilistically select a certain portion of the dataset to include in either
+		//the training or the test set. 
+		
 		//while we are in the size 2 segment of the file
 		while (lineNo < 122) {
 			randomNumber = randInt(0, 10);

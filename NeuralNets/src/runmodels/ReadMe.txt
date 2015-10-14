@@ -13,11 +13,21 @@ AbstractModel.java
 AbstractNode.java
 	Template for a node/unit in a neural network. Currently, the only shared functionality is to calculate the output (double) 
 	based on a vector of inputted doubles.
+
+ActivationFunction.java
+	Template for the neural node activation functions. Per the project parameters we need
+	to implement 2 possibilities for the feed forward neural net (hereafter, FFNN) and one
+	for the radial basis function neural network (hereafter, RBFNN). 
+
+NeuralNets.java
+	Template for a neural network. 
 	
-NOTE: NeuralNets.java will soon become an abstract class as well, from which our two neural net classes will inherit. We
-	just need to figure out what shared functionalities they will have first. Stay tuned!
+NOTE: Not all of these abstract classes were fully implemented, but we kept them to 
+use as a template going forward, because we feel that is good programming practice. 
 	
 ///////// Other Classes /////////
+
+
 
 FeedForwardANN.java
 	Will implement a feed-forward neural network that uses back-propagation.

@@ -10,7 +10,9 @@ package runmodels;
  * @author Janette
  */
 
-// https://svn.cms.waikato.ac.nz/svn/weka/branches/stable-3-2-1/weka/classifiers/neural/NeuralNetwork.java
+/*
+ * A framework for the Neural Net classes  
+ */
 
 
 public class NeuralNets extends AbstractModel{

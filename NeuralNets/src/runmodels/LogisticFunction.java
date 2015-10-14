@@ -1,6 +1,9 @@
 package runmodels;
 
-//import java.lang.Math.*;
+/*
+ * A class for calculating the sigmoidal activation function for the FFNN 
+ * (which, in this case is the logistic function). 
+ */
 
 public class LogisticFunction extends AbstractFunction {
 	

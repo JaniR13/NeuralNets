@@ -1,8 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The class that contains the main method that runs either the Rosenbrock function 
+ * generation, the construction/training/testing of a FFNN, or the 
+ * construction/training/testing of a RBFNN.  
  */
+
 package runmodels;
 
 import java.awt.*;
@@ -23,6 +24,7 @@ public class RunModels {
     	Scanner in = new Scanner(System.in);
     	String choice = "";
     	
+    	//gives the user a series of choices
     	System.out.println("Please pick from one of the following options");
     	System.out.println("To generate output for the Rosenbrock function type 'rose'");
     	System.out.println("To run the feed-forward neural net (with backprop) type 'ffnn'");
@@ -185,6 +187,8 @@ public class RunModels {
     	}
     }
 
+    //calls a window with a pop up box that lets the user choose their exact
+    //file location (with input from file string that gives user's home directory.
     public static String callFileChooser(String filePath) {
         // builds a JFrame
         JFrame frame = new JFrame("Folder Selection Pane");
